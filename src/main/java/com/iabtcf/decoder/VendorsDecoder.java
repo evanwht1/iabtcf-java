@@ -30,13 +30,13 @@ final class VendorsDecoder {
 	 * @return the new position that was read to
 	 */
 	static BitSet decode(BitVector bitVector) {
-		int maxVendor = bitVector.readInt(MAX_VENDOR_ID);
-		boolean isRangeEncoding = bitVector.readBit(IS_RANGE_ENCODING);
+		int maxVendor = bitVector.readNextInt(MAX_VENDOR_ID);
+		boolean isRangeEncoding = bitVector.readNextBit(IS_RANGE_ENCODING);
 
 		if (!isRangeEncoding) {
 			final BitSet set = new BitSet(maxVendor);
 			for (int i = 0; i < maxVendor; i++) {
-				boolean hasVendorConsent = bitVector.readBit(BIT_FIELD);
+				boolean hasVendorConsent = bitVector.readNextBit(BIT_FIELD);
 				if (hasVendorConsent) {
 					// vendors are 1 indexed so add 1 to current index
 					set.set(i + 1);
@@ -50,12 +50,12 @@ final class VendorsDecoder {
 
 	static BitSet vendorIdsFromRange(BitVector bitVector, int maxVendor) {
 		final BitSet set = new BitSet(maxVendor);
-		int numberOfVendorEntries = bitVector.readInt(NUM_ENTRIES);
+		int numberOfVendorEntries = bitVector.readNextInt(NUM_ENTRIES);
 		for (int i = 0; i < numberOfVendorEntries; i++) {
-			boolean isRangeEntry = bitVector.readBit(IS_A_RANGE);
-			int startOrOnlyVendorId = bitVector.readInt(START_OR_ONLY_VENDOR_ID);
+			boolean isRangeEntry = bitVector.readNextBit(IS_A_RANGE);
+			int startOrOnlyVendorId = bitVector.readNextInt(START_OR_ONLY_VENDOR_ID);
 			if (isRangeEntry) {
-				int endVendorId = bitVector.readInt(END_VENDOR_ID);
+				int endVendorId = bitVector.readNextInt(END_VENDOR_ID);
 				set.set(startOrOnlyVendorId, endVendorId + 1);
 			} else {
 				set.set(startOrOnlyVendorId);

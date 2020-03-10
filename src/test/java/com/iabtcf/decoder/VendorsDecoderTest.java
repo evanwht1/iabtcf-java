@@ -16,7 +16,7 @@ public class VendorsDecoderTest {
 	public void testParseDisclosedVendors() {
 		String base64CoreString = "IBAgAAAgAIAwgAgAAAAEAAAACA";
 		final BitVector bitVector = Util.vectorFromBase64String(base64CoreString);
-		bitVector.readInt(SEGMENT_TYPE);
+		bitVector.readNextInt(SEGMENT_TYPE);
 		BitSet vendors = VendorsDecoder.decode(bitVector);
 		assertTrue(vendors.get(23));
 		assertTrue(vendors.get(37));
@@ -32,7 +32,7 @@ public class VendorsDecoderTest {
 	public void testParseAllowedVendors() {
 		String base64CoreString = "QAagAQAgAIAwgA";
 		final BitVector bitVector = Util.vectorFromBase64String(base64CoreString);
-		bitVector.readInt(SEGMENT_TYPE);
+		bitVector.readNextInt(SEGMENT_TYPE);
 		BitSet vendors = VendorsDecoder.decode(bitVector);
 		assertTrue(vendors.get(12));
 		assertTrue(vendors.get(23));

@@ -16,37 +16,37 @@ public class BitVectorTest {
     public void testReadSmall() {
         String bitString = "0000 1000 0000 0001";
         BitVector bitVector = vectorFromBitString(bitString);
-        assertEquals(0, bitVector.readInt(() -> 4));
-        assertEquals(128, bitVector.readInt(() -> 8));
-        assertEquals(1, bitVector.readInt(() -> 4));
+        assertEquals(0, bitVector.readNextInt(() -> 4));
+        assertEquals(128, bitVector.readNextInt(() -> 8));
+        assertEquals(1, bitVector.readNextInt(() -> 4));
     }
 
     @Test
     public void testReadInteger() {
         String bitString = "0111 1111 1111 1111 1111 1111 1111 1111";
         BitVector bitVector = vectorFromBitString(bitString);
-        assertEquals(Integer.MAX_VALUE, bitVector.readInt(() -> 32));
+        assertEquals(Integer.MAX_VALUE, bitVector.readNextInt(() -> 32));
     }
 
     @Test
     public void testReadLong() {
         String bitString = "0111 1111 1111 1111 1111 1111 1111 1111" + "1111 1111 1111 1111 1111 1111 1111 1111";
         BitVector bitVector = vectorFromBitString(bitString);
-        assertEquals(Long.MAX_VALUE, bitVector.readLong(64));
+        assertEquals(Long.MAX_VALUE, bitVector.readNextLong(64));
     }
 
     @Test
     public void tesReadInstant() {
         String bitString = "001110101101110010100111000111000100";
         BitVector bitVector = vectorFromBitString(bitString);
-        assertEquals(Instant.parse("2020-01-26T18:19:25.200Z"), bitVector.readInstantFromDeciSecond(() -> 36));
+        assertEquals(Instant.parse("2020-01-26T18:19:25.200Z"), bitVector.readNextInstantFromDeciSecond(() -> 36));
     }
 
     @Test
     public void tesReadEpochInstant() {
         String bitString = Stream.generate(() -> "0").limit(36).collect(Collectors.joining());
         BitVector bitVector = vectorFromBitString(bitString);
-        assertEquals(Instant.EPOCH, bitVector.readInstantFromDeciSecond(() -> 36));
+        assertEquals(Instant.EPOCH, bitVector.readNextInstantFromDeciSecond(() -> 36));
     }
 
     @Test
@@ -55,9 +55,9 @@ public class BitVectorTest {
         BitVector bitVector = vectorFromBitString(bitString);
         for (int i = 0; i < bitString.length(); i++) {
             if (bitString.charAt(i) == '1') {
-                assertTrue(bitVector.readBit());
+                assertTrue(bitVector.readNextBit());
             } else {
-                assertFalse(bitVector.readBit());
+                assertFalse(bitVector.readNextBit());
             }
         }
     }
@@ -66,7 +66,7 @@ public class BitVectorTest {
     public void testReadSixBitString() {
         String bitString = "000000 000001";
         BitVector bitVector = vectorFromBitString(bitString);
-        assertEquals("AB", bitVector.readString(() -> 12));
+        assertEquals("AB", bitVector.readNextString(() -> 12));
     }
 
     private BitVector vectorFromBitString(String bits) {

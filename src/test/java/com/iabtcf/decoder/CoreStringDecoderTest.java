@@ -22,7 +22,7 @@ public class CoreStringDecoderTest {
 	public void testParse() {
 		String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA";
 		final BitVector bitVector = Util.vectorFromBase64String(base64CoreString);
-		CoreString coreString = CoreStringDecoder.decode(bitVector.readInt(VERSION), bitVector);
+		CoreString coreString = CoreStringDecoder.decode(bitVector.readNextInt(VERSION), bitVector);
 
 		assertEquals(2, coreString.getVersion());
 		assertEquals(Instant.parse("2020-01-26T17:01:00Z"), coreString.getConsentRecordCreated());

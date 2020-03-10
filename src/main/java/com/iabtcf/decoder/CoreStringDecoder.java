@@ -41,21 +41,21 @@ class CoreStringDecoder {
 		// Read fields in order!
 		return CoreStringImpl.newBuilder()
 		                     .version(version)
-		                     .consentRecordCreated(bitVector.readInstantFromDeciSecond(CREATED))
-		                     .consentRecordLastUpdated(bitVector.readInstantFromDeciSecond(LAST_UPDATED))
-		                     .consentManagerProviderId(bitVector.readInt(CMP_ID))
-		                     .consentManagerProviderVersion(bitVector.readInt(CMP_VERSION))
-		                     .consentScreen(bitVector.readInt(CONSENT_SCREEN))
-		                     .consentLanguage(bitVector.readString(CONSENT_LANGUAGE))
-		                     .vendorListVersion(bitVector.readInt(VENDOR_LIST_VERSION))
-		                     .policyVersion(bitVector.readInt(TCF_POLICY_VERSION))
-		                     .isServiceSpecific(bitVector.readBit(IS_SERVICE_SPECIFIC))
-		                     .useNonStandardStacks(bitVector.readBit(USE_NON_STANDARD_STACKS))
-		                     .specialFeaturesOptInts(bitVector.readBitSet(SPECIAL_FEATURE_OPT_INS.getLength()))
-		                     .purposesConsent(bitVector.readBitSet(PURPOSES_CONSENT.getLength()))
-		                     .purposesLITransparency(bitVector.readBitSet(PURPOSE_LI_TRANSPARENCY.getLength()))
-		                     .isPurposeOneTreatment(bitVector.readBit(PURPOSE_ONE_TREATMENT))
-		                     .publisherCountryCode(bitVector.readString(PUBLISHER_CC))
+		                     .consentRecordCreated(bitVector.readNextInstantFromDeciSecond(CREATED))
+		                     .consentRecordLastUpdated(bitVector.readNextInstantFromDeciSecond(LAST_UPDATED))
+		                     .consentManagerProviderId(bitVector.readNextInt(CMP_ID))
+		                     .consentManagerProviderVersion(bitVector.readNextInt(CMP_VERSION))
+		                     .consentScreen(bitVector.readNextInt(CONSENT_SCREEN))
+		                     .consentLanguage(bitVector.readNextString(CONSENT_LANGUAGE))
+		                     .vendorListVersion(bitVector.readNextInt(VENDOR_LIST_VERSION))
+		                     .policyVersion(bitVector.readNextInt(TCF_POLICY_VERSION))
+		                     .isServiceSpecific(bitVector.readNextBit(IS_SERVICE_SPECIFIC))
+		                     .useNonStandardStacks(bitVector.readNextBit(USE_NON_STANDARD_STACKS))
+		                     .specialFeaturesOptInts(bitVector.readNextBitSet(SPECIAL_FEATURE_OPT_INS.getLength()))
+		                     .purposesConsent(bitVector.readNextBitSet(PURPOSES_CONSENT.getLength()))
+		                     .purposesLITransparency(bitVector.readNextBitSet(PURPOSE_LI_TRANSPARENCY.getLength()))
+		                     .isPurposeOneTreatment(bitVector.readNextBit(PURPOSE_ONE_TREATMENT))
+		                     .publisherCountryCode(bitVector.readNextString(PUBLISHER_CC))
 		                     .vendorConsents(VendorsDecoder.decode(bitVector))
 		                     .vendorLegitimateInterests(VendorsDecoder.decode(bitVector))
 		                     .publisherRestrictions(decodePublisherRestrictions(bitVector))
@@ -70,11 +70,11 @@ class CoreStringDecoder {
 	 */
 	static Map<Integer, PublisherRestriction> decodePublisherRestrictions(BitVector bitVector) {
 		final Map<Integer, PublisherRestriction> restrictions = new HashMap<>();
-		int numberOfPublisherRestrictions = bitVector.readInt(NUM_PUB_RESTRICTIONS);
+		int numberOfPublisherRestrictions = bitVector.readNextInt(NUM_PUB_RESTRICTIONS);
 
 		for (int i = 0; i < numberOfPublisherRestrictions; i++) {
-			int purposeId = bitVector.readInt(PURPOSE_ID);
-			int restrictionTypeId = bitVector.readInt(RESTRICTION_TYPE);
+			int purposeId = bitVector.readNextInt(PURPOSE_ID);
+			int restrictionTypeId = bitVector.readNextInt(RESTRICTION_TYPE);
 			RestrictionType restrictionType = RestrictionType.fromId(restrictionTypeId);
 
 			BitSet vendorIds = VendorsDecoder.vendorIdsFromRange(bitVector, numberOfPublisherRestrictions);

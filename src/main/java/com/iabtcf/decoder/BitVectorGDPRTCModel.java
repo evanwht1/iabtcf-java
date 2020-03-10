@@ -7,6 +7,7 @@ import com.iabtcf.PublisherTC;
 
 import java.util.BitSet;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @author SleimanJneidi
@@ -14,18 +15,20 @@ import java.util.Objects;
  */
 class BitVectorGDPRTCModel implements TCModel {
 
-    private final CoreString coreString;
-    private final OutOfBandConsent outOfBandVendors;
-    private final PublisherTC publisherPurposes;
+    private final Supplier<CoreString> coreStringSupplier;
+    private CoreString coreString;
+    private OutOfBandConsent outOfBandVendors;
+    private final Supplier<PublisherTC> publisherPurposesSupplier;
+    private PublisherTC publisherPurposes;
 
     private BitVectorGDPRTCModel(final Builder b) {
-        coreString = b.coreString;
-        if (b.disclosedVendors != Constants.EMPTY_BIT_SET || b.allowedVendors != Constants.EMPTY_BIT_SET) {
+        coreStringSupplier = b.coreString;
+        if (b.disclosedVendors != Constants.EMPTY_SUPPLIER || b.allowedVendors != Constants.EMPTY_SUPPLIER) {
             outOfBandVendors = new OutOfBandVendors(b.disclosedVendors, b.allowedVendors);
         } else {
             outOfBandVendors = OutOfBandVendors.EMPTY;
         }
-        publisherPurposes = b.publisherPurposes;
+        publisherPurposesSupplier = b.publisherPurposes;
     }
 
     static Builder newBuilder() {
@@ -34,6 +37,9 @@ class BitVectorGDPRTCModel implements TCModel {
 
     @Override
     public CoreString getCoreString() {
+        if (coreString == null) {
+            coreString = coreStringSupplier.get();
+        }
         return coreString;
     }
 
@@ -44,6 +50,9 @@ class BitVectorGDPRTCModel implements TCModel {
 
     @Override
     public PublisherTC getPublisherPurposesTC() {
+        if (publisherPurposes == null) {
+            publisherPurposes = publisherPurposesSupplier.get();
+        }
         return publisherPurposes;
     }
 
@@ -77,29 +86,29 @@ class BitVectorGDPRTCModel implements TCModel {
 
     static final class Builder {
 
-        private CoreString coreString;
-        private BitSet disclosedVendors = Constants.EMPTY_BIT_SET;
-        private BitSet allowedVendors = Constants.EMPTY_BIT_SET;
-        private PublisherTC publisherPurposes = PublisherTCImpl.EMPTY;
+        private Supplier<CoreString> coreString;
+        private Supplier<BitSet> disclosedVendors = Constants.EMPTY_SUPPLIER;
+        private Supplier<BitSet> allowedVendors = Constants.EMPTY_SUPPLIER;
+        private Supplier<PublisherTC> publisherPurposes = () -> PublisherTCImpl.EMPTY;
 
         private Builder() {}
 
-        Builder coreString(final CoreString coreString) {
+        Builder coreString(final Supplier<CoreString> coreString) {
             this.coreString = coreString;
             return this;
         }
 
-        Builder disclosedVendors(final BitSet disclosedVendors) {
+        Builder disclosedVendors(final Supplier<BitSet> disclosedVendors) {
             this.disclosedVendors = disclosedVendors;
             return this;
         }
 
-        Builder allowedVendors(final BitSet allowedVendors) {
+        Builder allowedVendors(final Supplier<BitSet> allowedVendors) {
             this.allowedVendors = allowedVendors;
             return this;
         }
 
-        Builder publisherPurposes(final PublisherTC publisherPurposes) {
+        Builder publisherPurposes(final Supplier<PublisherTC> publisherPurposes) {
             this.publisherPurposes = publisherPurposes;
             return this;
         }

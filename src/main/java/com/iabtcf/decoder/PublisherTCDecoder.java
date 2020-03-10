@@ -24,12 +24,12 @@ class PublisherTCDecoder {
 	 * @return PublisherTC fields contained in the bit vector
 	 */
 	static PublisherTCImpl decode(BitVector bitVector) {
-		final BitSet consents = bitVector.readBitSet(PUB_PURPOSE_CONSENT.getLength());
-		final BitSet liTransparency = bitVector.readBitSet(PUB_PURPOSES_LI_TRANSPARENCY.getLength());
+		final BitSet consents = bitVector.readNextBitSet(PUB_PURPOSE_CONSENT.getLength());
+		final BitSet liTransparency = bitVector.readNextBitSet(PUB_PURPOSES_LI_TRANSPARENCY.getLength());
 
-		final int numberOfCustomPurposes = bitVector.readInt(NUM_CUSTOM_PURPOSES);
-		final BitSet customPurposes = bitVector.readBitSet(numberOfCustomPurposes);
-		final BitSet customLiTransparency = bitVector.readBitSet(numberOfCustomPurposes);
+		final int numberOfCustomPurposes = bitVector.readNextInt(NUM_CUSTOM_PURPOSES);
+		final BitSet customPurposes = bitVector.readNextBitSet(numberOfCustomPurposes);
+		final BitSet customLiTransparency = bitVector.readNextBitSet(numberOfCustomPurposes);
 
 		return new PublisherTCImpl(consents, liTransparency, customPurposes, customLiTransparency);
 	}

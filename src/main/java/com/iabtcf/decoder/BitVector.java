@@ -20,34 +20,34 @@ class BitVector {
         return new BitVector(bytes);
     }
 
-    int readInt(Field field) {
-        return (int) readLong(field.getLength());
+    int readNextInt(Field field) {
+        return (int) readNextLong(field.getLength());
     }
 
-    BitSet readBitSet(int length) {
+    BitSet readNextBitSet(int length) {
         final BitSet set = new BitSet(length);
         for (int i = 1; i <= length; i++) {
-            set.set(i, readBit());
+            set.set(i, readNextBit());
         }
         return set;
     }
 
-    Instant readInstantFromDeciSecond(Field field) {
-        long epochDeci = readLong(field.getLength()) * 100;
+    Instant readNextInstantFromDeciSecond(Field field) {
+        long epochDeci = readNextLong(field.getLength()) * 100;
         return Instant.ofEpochMilli(epochDeci);
     }
 
-    String readString(Field field) {
+    String readNextString(Field field) {
         final StringBuilder sb = new StringBuilder(field.getLength() / 6);
         for (int i = 0; i < field.getLength(); i += 6) {
-            char c = (char) (readLong(6) + 'A');
+            char c = (char) (readNextLong(6) + 'A');
             sb.append(c);
         }
         return sb.toString();
     }
 
-    boolean readBit(Field field) {
-        return readBit();
+    boolean readNextBit(Field field) {
+        return readNextBit();
     }
 
     /**
@@ -56,7 +56,7 @@ class BitVector {
      *
      * @return whether or not the bit at the current position is a 1
      */
-    boolean readBit() {
+    boolean readNextBit() {
         final boolean b = (data[position / Byte.SIZE] >> (7 - (position % Byte.SIZE)) & 1) == 1;
         position++;
         return b;
@@ -69,11 +69,11 @@ class BitVector {
      * @param length number of bits to read
      * @return number representing the bits in big endian format but viewed as if only the right most length bits were used
      */
-    long readLong(int length) {
+    long readNextLong(int length) {
         long num = 0L;
         int bitIndex = length - 1;
         for (int i = 1; i <= length; i++) {
-            if (readBit()) {
+            if (readNextBit()) {
                 num |= 1L << bitIndex;
             }
             bitIndex--;

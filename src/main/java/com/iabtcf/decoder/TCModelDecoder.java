@@ -20,7 +20,7 @@ public class TCModelDecoder {
         final String[] split = consentString.split("\\.");
         final BitVector coreStringVector = vectorFromString(split[0]);
 
-        int version = coreStringVector.readInt(Field.CoreString.VERSION);
+        int version = coreStringVector.readNextInt(Field.CoreString.VERSION);
         switch (version) {
             case 1:
                 // TODO : add version1
@@ -28,7 +28,7 @@ public class TCModelDecoder {
             case 2:
                 final BitVectorGDPRTCModel.Builder builder = BitVectorGDPRTCModel
                         .newBuilder()
-                        .coreString(CoreStringDecoder.decode(version, coreStringVector));
+                        .coreString(() -> CoreStringDecoder.decode(version, coreStringVector));
                 for (int i = 1; i < split.length; i++){
                     readOptionalVector(builder, vectorFromString(split[i]));
                 }
@@ -40,16 +40,16 @@ public class TCModelDecoder {
 
 
     private static void readOptionalVector(BitVectorGDPRTCModel.Builder builder, BitVector bitVector) {
-        SegmentType segmentType = SegmentType.get(bitVector.readInt(SEGMENT_TYPE));
+        SegmentType segmentType = SegmentType.get(bitVector.readNextInt(SEGMENT_TYPE));
         switch (segmentType) {
             case DISCLOSED_VENDOR:
-                builder.disclosedVendors(VendorsDecoder.decode(bitVector));
+                builder.disclosedVendors(() -> VendorsDecoder.decode(bitVector));
                 break;
             case ALLOWED_VENDOR:
-                builder.allowedVendors(VendorsDecoder.decode(bitVector));
+                builder.allowedVendors(() -> VendorsDecoder.decode(bitVector));
                 break;
             case PUBLISHER_TC:
-                builder.publisherPurposes(PublisherTCDecoder.decode(bitVector));
+                builder.publisherPurposes(() -> PublisherTCDecoder.decode(bitVector));
                 break;
         }
     }
