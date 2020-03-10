@@ -1,7 +1,7 @@
 package com.iabtcf.decoder;
 
 import com.iabtcf.CoreString;
-import com.iabtcf.GDPRTransparencyAndConsent;
+import com.iabtcf.TCModel;
 import com.iabtcf.OutOfBandConsent;
 import com.iabtcf.PublisherTC;
 import com.iabtcf.RestrictionType;
@@ -19,7 +19,7 @@ public class TCDecoderTest {
     @Test
     public void testDecodeAllSegments() {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA.cAAAAAAAITg=";
-        GDPRTransparencyAndConsent tc = TCModelDecoder.decode(tcString);
+        TCModel tc = TCModelDecoder.decode(tcString);
 
         final OutOfBandConsent outOfBandSignals = tc.getOutOfBandSignals();
         assertNotNull(outOfBandSignals);
@@ -49,7 +49,7 @@ public class TCDecoderTest {
     @Test
     public void testParseWithOOBSignals() {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA";
-        GDPRTransparencyAndConsent tc = TCModelDecoder.decode(tcString);
+        TCModel tc = TCModelDecoder.decode(tcString);
 
         final OutOfBandConsent outOfBandSignals = tc.getOutOfBandSignals();
         assertNotNull(outOfBandSignals);
@@ -103,7 +103,7 @@ public class TCDecoderTest {
                 + "0000000000000011";
 
         String base64CoreString = Util.base64FromBitString(bitString);
-        GDPRTransparencyAndConsent tc = TCModelDecoder.decode(base64CoreString);
+        TCModel tc = TCModelDecoder.decode(base64CoreString);
         final CoreString coreString = tc.getCoreString();
 
         assertEquals(RestrictionType.REQUIRE_CONSENT, coreString.getVendorRestrictionType(1, 1));
@@ -142,8 +142,8 @@ public class TCDecoderTest {
         final String publisherPurposes = "00000000"; // segment type
         final String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA." + Util.base64FromBitString(publisherPurposes);
 
-        final GDPRTransparencyAndConsent tc = TCModelDecoder.decode(base64CoreString);
-        assertNull(tc.getPublisherPurposesTC());
+        final TCModel tc = TCModelDecoder.decode(base64CoreString);
+        assertEquals(PublisherTCImpl.EMPTY, tc.getPublisherPurposesTC());
     }
 
 }

@@ -11,6 +11,11 @@ import java.util.stream.IntStream;
  */
 class PublisherTCImpl implements PublisherTC {
 
+	static final PublisherTCImpl EMPTY = new PublisherTCImpl(Constants.EMPTY_BIT_SET,
+															 Constants.EMPTY_BIT_SET,
+															 Constants.EMPTY_BIT_SET,
+															 Constants.EMPTY_BIT_SET);
+
 	private final BitSet purposesConsent;
 	private final BitSet purposesLegitimateInterest;
 	private final BitSet customPurposesConsent;

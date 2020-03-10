@@ -3,7 +3,7 @@ package com.iabtcf;
 /**
  * @author evanwht1
  */
-public interface GDPRTransparencyAndConsent {
+public interface TCModel {
 
     CoreString getCoreString();
 

@@ -1,7 +1,7 @@
 package com.iabtcf.decoder;
 
 import com.iabtcf.CoreString;
-import com.iabtcf.GDPRTransparencyAndConsent;
+import com.iabtcf.TCModel;
 import com.iabtcf.OutOfBandConsent;
 import com.iabtcf.PublisherTC;
 
@@ -12,15 +12,19 @@ import java.util.Objects;
  * @author SleimanJneidi
  * @author evanwht1
  */
-class BitVectorGDPRTCModel implements GDPRTransparencyAndConsent {
+class BitVectorGDPRTCModel implements TCModel {
 
-    private final CoreStringImpl coreString;
-    private final OutOfBandVendors outOfBandVendors;
+    private final CoreString coreString;
+    private final OutOfBandConsent outOfBandVendors;
     private final PublisherTC publisherPurposes;
 
     private BitVectorGDPRTCModel(final Builder b) {
         coreString = b.coreString;
-        outOfBandVendors = new OutOfBandVendors(b.disclosedVendors, b.allowedVendors);
+        if (b.disclosedVendors != Constants.EMPTY_BIT_SET || b.allowedVendors != Constants.EMPTY_BIT_SET) {
+            outOfBandVendors = new OutOfBandVendors(b.disclosedVendors, b.allowedVendors);
+        } else {
+            outOfBandVendors = OutOfBandVendors.EMPTY;
+        }
         publisherPurposes = b.publisherPurposes;
     }
 
@@ -73,16 +77,14 @@ class BitVectorGDPRTCModel implements GDPRTransparencyAndConsent {
 
     static final class Builder {
 
-        private static final BitSet EMPTY = new BitSet();
-
-        private CoreStringImpl coreString;
-        private BitSet disclosedVendors = EMPTY;
-        private BitSet allowedVendors = EMPTY;
-        private PublisherTCImpl publisherPurposes;
+        private CoreString coreString;
+        private BitSet disclosedVendors = Constants.EMPTY_BIT_SET;
+        private BitSet allowedVendors = Constants.EMPTY_BIT_SET;
+        private PublisherTC publisherPurposes = PublisherTCImpl.EMPTY;
 
         private Builder() {}
 
-        Builder coreString(final CoreStringImpl coreString) {
+        Builder coreString(final CoreString coreString) {
             this.coreString = coreString;
             return this;
         }
@@ -97,12 +99,12 @@ class BitVectorGDPRTCModel implements GDPRTransparencyAndConsent {
             return this;
         }
 
-        Builder publisherPurposes(final PublisherTCImpl publisherPurposes) {
+        Builder publisherPurposes(final PublisherTC publisherPurposes) {
             this.publisherPurposes = publisherPurposes;
             return this;
         }
 
-        BitVectorGDPRTCModel build() {
+        TCModel build() {
             return new BitVectorGDPRTCModel(this);
         }
     }

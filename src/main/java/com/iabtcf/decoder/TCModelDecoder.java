@@ -1,6 +1,6 @@
 package com.iabtcf.decoder;
 
-import com.iabtcf.GDPRTransparencyAndConsent;
+import com.iabtcf.TCModel;
 
 import java.util.Base64;
 
@@ -16,7 +16,7 @@ public class TCModelDecoder {
 
     private static final Base64.Decoder DECODER = Base64.getUrlDecoder();
 
-    public static GDPRTransparencyAndConsent decode(String consentString) {
+    public static TCModel decode(String consentString) {
         final String[] split = consentString.split("\\.");
         final BitVector coreStringVector = vectorFromString(split[0]);
 
