@@ -1,4 +1,4 @@
-package com.iabtcf.v2.decoder;
+package com.iabtcf.v2;
 
 /**
  * TC string fields defined in the <a href="https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/master/TCFv2/IAB%20Tech%20Lab%20-%20Consent%20string%20and%20vendor%20list%20formats%20v2.md#tc-string-format">IAB TC String and GVL guide</a>.
@@ -10,7 +10,9 @@ package com.iabtcf.v2.decoder;
  *
  * @author evanwht1
  */
-interface Field {
+public interface Field {
+
+	int CHAR_LENGTH = 6;
 
 	int getLength();
 

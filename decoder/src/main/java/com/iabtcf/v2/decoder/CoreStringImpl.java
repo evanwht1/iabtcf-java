@@ -6,6 +6,7 @@ import com.iabtcf.v2.RestrictionType;
 
 import java.time.Instant;
 import java.util.BitSet;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -13,7 +14,7 @@ import java.util.stream.IntStream;
 /**
  * @author evanwht1
  */
-public class CoreStringImpl implements CoreString {
+class CoreStringImpl implements CoreString {
 
 	private final int version;
 	private final Instant consentRecordCreated;
@@ -33,7 +34,7 @@ public class CoreStringImpl implements CoreString {
 	private final BitSet purposesLITransparency;
 	private final BitSet vendorConsents;
 	private final BitSet vendorLegitimateInterests;
-	private final Map<Integer, PublisherRestriction> publisherRestrictions;
+	private final Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions;
 
 	private CoreStringImpl(final Builder builder) {
 		version = builder.version;
@@ -178,8 +179,12 @@ public class CoreStringImpl implements CoreString {
 
 	@Override
 	public RestrictionType getVendorRestrictionType(final int purpose, final int vendor) {
-		if (publisherRestrictions.containsKey(purpose) && publisherRestrictions.get(purpose).isVendorIncluded(vendor)) {
-			return publisherRestrictions.get(purpose).getRestrictionType();
+		if (publisherRestrictions.containsKey(purpose)) {
+			return publisherRestrictions.get(purpose).entrySet().stream()
+				   .filter(e -> e.getValue().get(vendor))
+				   .findFirst()
+				   .map(Map.Entry::getKey)
+				   .orElse(RestrictionType.UNDEFINED);
 		}
 		return RestrictionType.UNDEFINED;
 	}
@@ -282,7 +287,7 @@ public class CoreStringImpl implements CoreString {
 		private BitSet purposesLITransparency;
 		private BitSet vendorConsents;
 		private BitSet vendorLegitimateInterests;
-		private Map<Integer, PublisherRestriction> publisherRestrictions;
+		private Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions;
 
 		private Builder() {}
 
@@ -376,8 +381,8 @@ public class CoreStringImpl implements CoreString {
 			return this;
 		}
 
-		public Builder publisherRestrictions(final Map<Integer, PublisherRestriction> val) {
-			publisherRestrictions = val;
+		public Builder publisherRestrictions(final Map<Integer, EnumMap<RestrictionType, BitSet>> map) {
+			publisherRestrictions = map;
 			return this;
 		}
 

@@ -1,10 +1,12 @@
 package com.iabtcf.v2.decoder;
 
+import com.iabtcf.v2.Field;
+
 import java.util.BitSet;
 
-import static com.iabtcf.v2.decoder.Field.PublisherTC.NUM_CUSTOM_PURPOSES;
-import static com.iabtcf.v2.decoder.Field.PublisherTC.PUB_PURPOSES_LI_TRANSPARENCY;
-import static com.iabtcf.v2.decoder.Field.PublisherTC.PUB_PURPOSE_CONSENT;
+import static com.iabtcf.v2.Field.PublisherTC.NUM_CUSTOM_PURPOSES;
+import static com.iabtcf.v2.Field.PublisherTC.PUB_PURPOSES_LI_TRANSPARENCY;
+import static com.iabtcf.v2.Field.PublisherTC.PUB_PURPOSE_CONSENT;
 
 /**
  * Decoding Util to read the Publisher Transparency and Consent fields from a TC String

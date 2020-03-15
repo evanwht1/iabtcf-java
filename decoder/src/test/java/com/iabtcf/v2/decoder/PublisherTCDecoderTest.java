@@ -1,6 +1,8 @@
 package com.iabtcf.v2.decoder;
 
+import com.iabtcf.v2.Field;
 import com.iabtcf.v2.PublisherTC;
+import com.iabtcf.v2.SegmentType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.util.BitSet;
 
-import static com.iabtcf.v2.decoder.Field.Vendors.SEGMENT_TYPE;
+import static com.iabtcf.v2.Field.Vendors.SEGMENT_TYPE;
 import static org.junit.Assert.assertTrue;
 
 /**

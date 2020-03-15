@@ -1,10 +1,12 @@
 package com.iabtcf.v2.decoder;
 
+import com.iabtcf.v2.Field;
+import com.iabtcf.v2.SegmentType;
 import com.iabtcf.v2.TCModel;
 
 import java.util.Base64;
 
-import static com.iabtcf.v2.decoder.Field.Vendors.SEGMENT_TYPE;
+import static com.iabtcf.v2.Field.Vendors.SEGMENT_TYPE;
 
 /**
  * Decoder to read all information from a IAB TC v2 String.
@@ -40,7 +42,7 @@ public class TCModelDecoder {
 
 
     private static void readOptionalVector(BitVectorGDPRTCModel.Builder builder, BitVector bitVector) {
-        SegmentType segmentType = SegmentType.get(bitVector.readNextInt(SEGMENT_TYPE));
+        SegmentType segmentType = SegmentType.valueOf(bitVector.readNextInt(SEGMENT_TYPE));
         switch (segmentType) {
             case DISCLOSED_VENDOR:
                 builder.disclosedVendors(() -> VendorsDecoder.decode(bitVector));

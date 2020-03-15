@@ -11,5 +11,12 @@
 
     <artifactId>encoder</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.iabtcf</groupId>
+            <artifactId>model</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -1,5 +1,7 @@
 package com.iabtcf.v2.decoder;
 
+import com.iabtcf.v2.Field;
+
 import java.time.Instant;
 import java.util.BitSet;
 

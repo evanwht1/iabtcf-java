@@ -4,27 +4,28 @@ import com.iabtcf.v2.PublisherRestriction;
 import com.iabtcf.v2.RestrictionType;
 
 import java.util.BitSet;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.iabtcf.v2.decoder.Field.CoreString.CMP_ID;
-import static com.iabtcf.v2.decoder.Field.CoreString.CMP_VERSION;
-import static com.iabtcf.v2.decoder.Field.CoreString.CONSENT_LANGUAGE;
-import static com.iabtcf.v2.decoder.Field.CoreString.CONSENT_SCREEN;
-import static com.iabtcf.v2.decoder.Field.CoreString.CREATED;
-import static com.iabtcf.v2.decoder.Field.CoreString.IS_SERVICE_SPECIFIC;
-import static com.iabtcf.v2.decoder.Field.CoreString.LAST_UPDATED;
-import static com.iabtcf.v2.decoder.Field.CoreString.PUBLISHER_CC;
-import static com.iabtcf.v2.decoder.Field.CoreString.PURPOSES_CONSENT;
-import static com.iabtcf.v2.decoder.Field.CoreString.PURPOSE_LI_TRANSPARENCY;
-import static com.iabtcf.v2.decoder.Field.CoreString.PURPOSE_ONE_TREATMENT;
-import static com.iabtcf.v2.decoder.Field.CoreString.SPECIAL_FEATURE_OPT_INS;
-import static com.iabtcf.v2.decoder.Field.CoreString.TCF_POLICY_VERSION;
-import static com.iabtcf.v2.decoder.Field.CoreString.USE_NON_STANDARD_STACKS;
-import static com.iabtcf.v2.decoder.Field.CoreString.VENDOR_LIST_VERSION;
-import static com.iabtcf.v2.decoder.Field.PublisherRestrictions.NUM_PUB_RESTRICTIONS;
-import static com.iabtcf.v2.decoder.Field.PublisherRestrictions.PURPOSE_ID;
-import static com.iabtcf.v2.decoder.Field.PublisherRestrictions.RESTRICTION_TYPE;
+import static com.iabtcf.v2.Field.CoreString.CMP_ID;
+import static com.iabtcf.v2.Field.CoreString.CMP_VERSION;
+import static com.iabtcf.v2.Field.CoreString.CONSENT_LANGUAGE;
+import static com.iabtcf.v2.Field.CoreString.CONSENT_SCREEN;
+import static com.iabtcf.v2.Field.CoreString.CREATED;
+import static com.iabtcf.v2.Field.CoreString.IS_SERVICE_SPECIFIC;
+import static com.iabtcf.v2.Field.CoreString.LAST_UPDATED;
+import static com.iabtcf.v2.Field.CoreString.PUBLISHER_CC;
+import static com.iabtcf.v2.Field.CoreString.PURPOSES_CONSENT;
+import static com.iabtcf.v2.Field.CoreString.PURPOSE_LI_TRANSPARENCY;
+import static com.iabtcf.v2.Field.CoreString.PURPOSE_ONE_TREATMENT;
+import static com.iabtcf.v2.Field.CoreString.SPECIAL_FEATURE_OPT_INS;
+import static com.iabtcf.v2.Field.CoreString.TCF_POLICY_VERSION;
+import static com.iabtcf.v2.Field.CoreString.USE_NON_STANDARD_STACKS;
+import static com.iabtcf.v2.Field.CoreString.VENDOR_LIST_VERSION;
+import static com.iabtcf.v2.Field.PublisherRestrictions.NUM_PUB_RESTRICTIONS;
+import static com.iabtcf.v2.Field.PublisherRestrictions.PURPOSE_ID;
+import static com.iabtcf.v2.Field.PublisherRestrictions.RESTRICTION_TYPE;
 
 /**
  * @author evanwht1
@@ -68,18 +69,19 @@ class CoreStringDecoder {
 	 * @param bitVector bit vector to read from
 	 * @return map of purpose to publisher restriction and vendors it applies to
 	 */
-	static Map<Integer, PublisherRestriction> decodePublisherRestrictions(BitVector bitVector) {
-		final Map<Integer, PublisherRestriction> restrictions = new HashMap<>();
+	static Map<Integer, EnumMap<RestrictionType, BitSet>> decodePublisherRestrictions(BitVector bitVector) {
+		final Map<Integer, EnumMap<RestrictionType, BitSet>> restrictions = new HashMap<>();
 		int numberOfPublisherRestrictions = bitVector.readNextInt(NUM_PUB_RESTRICTIONS);
 
 		for (int i = 0; i < numberOfPublisherRestrictions; i++) {
 			int purposeId = bitVector.readNextInt(PURPOSE_ID);
 			int restrictionTypeId = bitVector.readNextInt(RESTRICTION_TYPE);
-			RestrictionType restrictionType = RestrictionType.fromId(restrictionTypeId);
+			RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeId);
 
 			BitSet vendorIds = VendorsDecoder.vendorIdsFromRange(bitVector, numberOfPublisherRestrictions);
 
-			restrictions.put(purposeId, new PublisherRestriction(restrictionType, vendorIds));
+			restrictions.computeIfAbsent(purposeId, p -> new EnumMap<>(RestrictionType.class))
+						.put(restrictionType, vendorIds);
 		}
 		return restrictions;
 	}

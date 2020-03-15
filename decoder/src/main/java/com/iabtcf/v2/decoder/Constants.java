@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 /**
  * @author evanwht1@gmail.com
  */
-public class Constants {
+class Constants {
 
 	private Constants() { }
 

@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.time.Instant;
 
-import static com.iabtcf.v2.decoder.Field.CoreString.VERSION;
+import static com.iabtcf.v2.Field.CoreString.VERSION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

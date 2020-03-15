@@ -1,14 +1,16 @@
 package com.iabtcf.v2.decoder;
 
+import com.iabtcf.v2.Field;
+
 import java.util.BitSet;
 
-import static com.iabtcf.v2.decoder.Field.Vendors.BIT_FIELD;
-import static com.iabtcf.v2.decoder.Field.Vendors.END_VENDOR_ID;
-import static com.iabtcf.v2.decoder.Field.Vendors.IS_A_RANGE;
-import static com.iabtcf.v2.decoder.Field.Vendors.IS_RANGE_ENCODING;
-import static com.iabtcf.v2.decoder.Field.Vendors.MAX_VENDOR_ID;
-import static com.iabtcf.v2.decoder.Field.Vendors.NUM_ENTRIES;
-import static com.iabtcf.v2.decoder.Field.Vendors.START_OR_ONLY_VENDOR_ID;
+import static com.iabtcf.v2.Field.Vendors.BIT_FIELD;
+import static com.iabtcf.v2.Field.Vendors.END_VENDOR_ID;
+import static com.iabtcf.v2.Field.Vendors.IS_A_RANGE;
+import static com.iabtcf.v2.Field.Vendors.IS_RANGE_ENCODING;
+import static com.iabtcf.v2.Field.Vendors.MAX_VENDOR_ID;
+import static com.iabtcf.v2.Field.Vendors.NUM_ENTRIES;
+import static com.iabtcf.v2.Field.Vendors.START_OR_ONLY_VENDOR_ID;
 
 /**
  * @author SleimanJneidi

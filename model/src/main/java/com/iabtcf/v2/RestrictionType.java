@@ -33,7 +33,7 @@ public enum RestrictionType {
         return value;
     }
 
-    public static RestrictionType fromId(int id) {
+    public static RestrictionType valueOf(int id) {
         switch (id) {
             case 0:
                 return NOT_ALLOWED;

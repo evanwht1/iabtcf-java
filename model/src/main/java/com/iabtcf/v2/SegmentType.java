@@ -1,10 +1,10 @@
-package com.iabtcf.v2.decoder;
+package com.iabtcf.v2;
 
 /**
  * @author SleimanJneidi
  * @author evanwht1
  */
-enum SegmentType {
+public enum SegmentType {
 
 	DEFAULT(0),
 	DISCLOSED_VENDOR(1),
@@ -21,7 +21,7 @@ enum SegmentType {
 		return value;
 	}
 
-	public static SegmentType get(final int type) {
+	public static SegmentType valueOf(final int type) {
 		switch (type) {
 			case 1:
 				return DISCLOSED_VENDOR;
