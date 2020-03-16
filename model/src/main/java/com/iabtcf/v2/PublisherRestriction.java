@@ -1,58 +1,15 @@
 package com.iabtcf.v2;
 
-import java.util.BitSet;
-import java.util.Objects;
+import java.util.stream.IntStream;
 
-/**
- * @author SleimanJneidi
- * @author evanwht1
- */
-public class PublisherRestriction {
+public interface PublisherRestriction {
 
-    private final RestrictionType restrictionType;
-    private final BitSet vendorIds;
+    Purpose getPurpose();
 
-    public PublisherRestriction(RestrictionType restrictionType, BitSet vendorIds) {
-        Objects.requireNonNull(vendorIds);
-        Objects.requireNonNull(restrictionType);
+    RestrictionType getRestrictionType();
 
-        this.restrictionType = restrictionType;
-        this.vendorIds = vendorIds;
-    }
+    boolean isVendorIncluded(final int vendor);
 
-    public RestrictionType getRestrictionType() {
-        return restrictionType;
-    }
+    IntStream getAllVendors();
 
-    public boolean isVendorIncluded(final int vendor) {
-        return vendorIds.get(vendor);
-    }
-
-    @Override
-    public String toString() {
-        return "PublisherRestriction{"
-               + "restrictionType="
-               + restrictionType
-               + ", vendorIds="
-               + vendorIds
-               + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        PublisherRestriction that = (PublisherRestriction) o;
-        return restrictionType == that.restrictionType
-               && vendorIds.equals(that.vendorIds);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(restrictionType, vendorIds);
-    }
 }

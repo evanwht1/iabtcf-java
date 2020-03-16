@@ -1,7 +1,6 @@
 package com.iabtcf.v2.decoder;
 
 import com.iabtcf.v2.CoreString;
-import com.iabtcf.v2.PublisherRestriction;
 import com.iabtcf.v2.RestrictionType;
 
 import java.time.Instant;
