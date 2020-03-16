@@ -1,6 +1,8 @@
 package com.iabtcf.v2.decoder;
 
 import com.iabtcf.v2.CoreString;
+import com.iabtcf.v2.PublisherRestriction;
+import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
 
 import java.time.Instant;
@@ -9,6 +11,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author evanwht1
@@ -33,7 +36,7 @@ class CoreStringImpl implements CoreString {
 	private final BitSet purposesLITransparency;
 	private final BitSet vendorConsents;
 	private final BitSet vendorLegitimateInterests;
-	private final Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions;
+	private final EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> publisherRestrictions;
 
 	private CoreStringImpl(final Builder builder) {
 		version = builder.version;
@@ -177,7 +180,7 @@ class CoreStringImpl implements CoreString {
 	}
 
 	@Override
-	public RestrictionType getVendorRestrictionType(final int purpose, final int vendor) {
+	public RestrictionType getPublisherRestriction(final Purpose purpose, final int vendor) {
 		if (publisherRestrictions.containsKey(purpose)) {
 			return publisherRestrictions.get(purpose).entrySet().stream()
 				   .filter(e -> e.getValue().get(vendor))
@@ -186,6 +189,35 @@ class CoreStringImpl implements CoreString {
 				   .orElse(RestrictionType.UNDEFINED);
 		}
 		return RestrictionType.UNDEFINED;
+	}
+
+	@Override
+	public Stream<PublisherRestriction> getAllPublisherRestrictions() {
+		return publisherRestrictions.entrySet()
+									.stream()
+									.flatMap(e -> e.getValue().entrySet()
+												   .stream()
+												   .map(r -> new PublisherRestriction() {
+													   @Override
+													   public Purpose getPurpose() {
+														   return e.getKey();
+													   }
+
+													   @Override
+													   public RestrictionType getRestrictionType() {
+														   return r.getKey();
+													   }
+
+													   @Override
+													   public boolean isVendorIncluded(final int vendor) {
+														   return r.getValue().get(vendor);
+													   }
+
+													   @Override
+													   public IntStream getAllVendors() {
+														   return r.getValue().stream();
+													   }
+												   }));
 	}
 
 	@Override
@@ -286,7 +318,7 @@ class CoreStringImpl implements CoreString {
 		private BitSet purposesLITransparency;
 		private BitSet vendorConsents;
 		private BitSet vendorLegitimateInterests;
-		private Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions;
+		private EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> publisherRestrictions;
 
 		private Builder() {}
 
@@ -380,7 +412,7 @@ class CoreStringImpl implements CoreString {
 			return this;
 		}
 
-		public Builder publisherRestrictions(final Map<Integer, EnumMap<RestrictionType, BitSet>> map) {
+		public Builder publisherRestrictions(final EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> map) {
 			publisherRestrictions = map;
 			return this;
 		}

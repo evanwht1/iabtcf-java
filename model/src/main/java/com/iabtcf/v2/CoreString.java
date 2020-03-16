@@ -2,6 +2,7 @@ package com.iabtcf.v2;
 
 import java.time.Instant;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * All details required to communicate basic vendor transparency and consent.
@@ -224,5 +225,7 @@ public interface CoreString {
 	 * @param vendor id of the vendor
 	 * @return what overriding restriction type applies (default to {@link RestrictionType#UNDEFINED})
 	 */
-	RestrictionType getVendorRestrictionType(final int purpose, final int vendor);
+	RestrictionType getPublisherRestriction(final Purpose purpose, final int vendor);
+
+	Stream<PublisherRestriction> getAllPublisherRestrictions();
 }

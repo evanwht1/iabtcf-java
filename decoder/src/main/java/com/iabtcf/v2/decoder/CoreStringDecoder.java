@@ -1,5 +1,6 @@
 package com.iabtcf.v2.decoder;
 
+import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
 
 import java.util.BitSet;
@@ -68,18 +69,18 @@ class CoreStringDecoder {
 	 * @param bitVector bit vector to read from
 	 * @return map of purpose to publisher restriction and vendors it applies to
 	 */
-	static Map<Integer, EnumMap<RestrictionType, BitSet>> decodePublisherRestrictions(BitVector bitVector) {
-		final Map<Integer, EnumMap<RestrictionType, BitSet>> restrictions = new HashMap<>();
+	private static EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> decodePublisherRestrictions(BitVector bitVector) {
+		final EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> restrictions = new EnumMap<>(Purpose.class);
 		int numberOfPublisherRestrictions = bitVector.readNextInt(NUM_PUB_RESTRICTIONS);
 
 		for (int i = 0; i < numberOfPublisherRestrictions; i++) {
-			int purposeId = bitVector.readNextInt(PURPOSE_ID);
+			Purpose purpose = Purpose.valueOf(bitVector.readNextInt(PURPOSE_ID));
 			int restrictionTypeId = bitVector.readNextInt(RESTRICTION_TYPE);
 			RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeId);
 
 			BitSet vendorIds = VendorsDecoder.vendorIdsFromRange(bitVector, numberOfPublisherRestrictions);
 
-			restrictions.computeIfAbsent(purposeId, p -> new EnumMap<>(RestrictionType.class))
+			restrictions.computeIfAbsent(purpose, p -> new EnumMap<>(RestrictionType.class))
 						.put(restrictionType, vendorIds);
 		}
 		return restrictions;

@@ -26,4 +26,21 @@ public enum Purpose {
 	public int getId() {
 		return id;
 	}
+
+	public static Purpose valueOf(final int id) {
+		switch (id) {
+			case 1: return STORE_AND_ACCESS_INFO_ON_DEVICE;
+			case 2: return SELECT_BASIC_ADS;
+			case 3: return CREATE_PERSONALISED_ADS_PROFILE;
+			case 4: return SELECT_PERSONAL_ADS;
+			case 5: return CREATE_PERSONAL_CONTENT_PROFILE;
+			case 6: return SELECT_PERSONALISED_CONTENT;
+			case 7: return MEASURE_AD_PERFORMANCE;
+			case 8: return MEASURE_CONTENT_PERFORMANCE;
+			case 9: return APPLY_MARKET_RESEARCH_TO_GENERATE_AUDIENCE_INSIGHTS;
+			case 10: return DEVELOP_AND_IMPROVE_PRODUCTS;
+			default:
+				throw new IllegalArgumentException("No purpose for id " + id);
+		}
+	}
 }

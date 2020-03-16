@@ -105,11 +105,11 @@ public class TCDecoderTest {
         TCModel tc = TCModelDecoder.decode(base64CoreString);
         final CoreString coreString = tc.getCoreString();
 
-        assertEquals(RestrictionType.REQUIRE_CONSENT, coreString.getVendorRestrictionType(1, 1));
-        assertEquals(RestrictionType.UNDEFINED, coreString.getVendorRestrictionType(1, 2));
-        assertEquals(RestrictionType.NOT_ALLOWED, coreString.getVendorRestrictionType(2, 2));
-        assertEquals(RestrictionType.REQUIRE_LEGITIMATE_INTEREST, coreString.getVendorRestrictionType(3, 3));
-        assertEquals(RestrictionType.UNDEFINED, coreString.getVendorRestrictionType(4, 1));
+        assertEquals(RestrictionType.REQUIRE_CONSENT, coreString.getPublisherRestriction(1, 1));
+        assertEquals(RestrictionType.UNDEFINED, coreString.getPublisherRestriction(1, 2));
+        assertEquals(RestrictionType.NOT_ALLOWED, coreString.getPublisherRestriction(2, 2));
+        assertEquals(RestrictionType.REQUIRE_LEGITIMATE_INTEREST, coreString.getPublisherRestriction(3, 3));
+        assertEquals(RestrictionType.UNDEFINED, coreString.getPublisherRestriction(4, 1));
     }
 
     @Test
