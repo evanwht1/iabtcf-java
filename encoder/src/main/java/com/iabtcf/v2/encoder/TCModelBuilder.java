@@ -1,6 +1,10 @@
 package com.iabtcf.v2.encoder;
 
+import com.iabtcf.v2.CoreString;
+import com.iabtcf.v2.OutOfBandConsent;
+import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.RestrictionType;
+import com.iabtcf.v2.TCModel;
 
 import java.time.Instant;
 import java.util.BitSet;
@@ -44,6 +48,45 @@ public class TCModelBuilder {
 	BitSet publisherCustomPurposesLI = new BitSet();
 
 	private TCModelBuilder() {}
+
+	private TCModelBuilder(TCModel model) {
+		CoreString coreString = model.getCoreString();
+		version = coreString.getVersion();
+		created = coreString.getCreated();
+		lastUpdated = coreString.getLastUpdated();
+		cmpId = coreString.getCmpId();
+		cmpVersion = coreString.getCmpVersion();
+		consentScreen = coreString.getConsentScreen();
+		consentLanguage = coreString.getConsentLanguage();
+		vendorListVersion = coreString.getVendorListVersion();
+		policyVersion = coreString.getPolicyVersion();
+		isServiceSpecific = coreString.isServiceSpecific();
+		useNonStandardStacks = coreString.isUseNonStandardStacks();
+		isPurposeOneTreatment = coreString.isPurposeOneTreatment();
+		publisherCountryCode = coreString.getPublisherCountryCode();
+		coreString.getAllOptedInSpecialFeatures().forEach(specialFeaturesOptInts::set);
+		coreString.getAllConsentedPurposes().forEach(purposesConsent::set);
+		coreString.getAllLegitimateInterestPurposes().forEach(purposesLITransparency::set);
+		coreString.getAllConsentedVendors().forEach(vendorConsents::add);
+		coreString.getAllLegitimateInterestVendors().forEach(vendorLegitimateInterests::add);
+		coreString.getAllPublisherRestrictions().forEach(pr -> {
+			RangeData rangeData = new RangeData();
+			pr.getAllVendors().forEach(rangeData::add);
+			publisherRestrictions.computeIfAbsent(pr.getPurpose().getId(), p -> new EnumMap<>(RestrictionType.class))
+								 .put(pr.getRestrictionType(), rangeData);
+
+		});
+
+		OutOfBandConsent outOfBandConsent = model.getOutOfBandConsent();
+		outOfBandConsent.getAllDisclosedVendors().forEach(disclosedVendors::add);
+		outOfBandConsent.getAllAllowedVendors().forEach(allowedVendors::add);
+
+		PublisherTC purposesTC = model.getPublisherTC();
+		purposesTC.getAllConsentedPurposes().forEach(publisherPurposes::set);
+		purposesTC.getAllLegitimateInterestPurposes().forEach(publisherPurposesLI::set);
+		purposesTC.getAllConsentedCustomPurposes().forEach(publisherCustomPurposes::set);
+		purposesTC.getAllLegitimateInterestCustomPurposes().forEach(publisherCustomPurposesLI::set);
+	}
 
 	public TCModelBuilder version(final int val) {
 		version = val;

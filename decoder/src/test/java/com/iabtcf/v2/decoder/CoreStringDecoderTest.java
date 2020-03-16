@@ -25,10 +25,10 @@ public class CoreStringDecoderTest {
 		CoreString coreString = CoreStringDecoder.decode(bitVector.readNextInt(VERSION), bitVector);
 
 		assertEquals(2, coreString.getVersion());
-		assertEquals(Instant.parse("2020-01-26T17:01:00Z"), coreString.getConsentRecordCreated());
-		assertEquals(Instant.parse("2021-02-02T17:01:00Z"), coreString.getConsentRecordLastUpdated());
-		assertEquals(675, coreString.getConsentManagerProviderId());
-		assertEquals(2, coreString.getConsentManagerProviderVersion());
+		assertEquals(Instant.parse("2020-01-26T17:01:00Z"), coreString.getCreated());
+		assertEquals(Instant.parse("2021-02-02T17:01:00Z"), coreString.getLastUpdated());
+		assertEquals(675, coreString.getCmpId());
+		assertEquals(2, coreString.getCmpVersion());
 		assertEquals(1, coreString.getConsentScreen());
 		assertEquals(15, coreString.getVendorListVersion());
 		assertEquals(2, coreString.getPolicyVersion());

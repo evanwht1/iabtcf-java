@@ -21,21 +21,21 @@ public interface CoreString {
 	 *
 	 * @return when the record was first created
 	 */
-	Instant getConsentRecordCreated();
+	Instant getCreated();
 
 	/**
 	 * The instant the record was last updated as read from an Epoch Decisecond (1/10th of a second)
 	 *
 	 * @return When the record was last updated
 	 */
-	Instant getConsentRecordLastUpdated();
+	Instant getLastUpdated();
 
 	/**
 	 * A unique ID assigned to the Consent Management Platform
 	 *
 	 * @return ID of the last Consent Management Platform that updated this record
 	 */
-	int getConsentManagerProviderId();
+	int getCmpId();
 
 	/**
 	 * Each Consent Management Platform should update their version number as a record of which version the user gave
@@ -43,7 +43,7 @@ public interface CoreString {
 	 *
 	 * @return version of the last Consent Management Platform that updated this record
 	 */
-	int getConsentManagerProviderVersion();
+	int getCmpVersion();
 
 	/**
 	 * The number is a CMP internal designation and is CmpVersion specific. The number is used for identifying on which

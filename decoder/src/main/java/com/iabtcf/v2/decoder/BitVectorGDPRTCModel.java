@@ -44,12 +44,12 @@ class BitVectorGDPRTCModel implements TCModel {
     }
 
     @Override
-    public OutOfBandConsent getOutOfBandSignals() {
+    public OutOfBandConsent getOutOfBandConsent() {
         return outOfBandVendors;
     }
 
     @Override
-    public PublisherTC getPublisherPurposesTC() {
+    public PublisherTC getPublisherTC() {
         if (publisherPurposes == null) {
             publisherPurposes = publisherPurposesSupplier.get();
         }

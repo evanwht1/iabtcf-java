@@ -70,22 +70,22 @@ class CoreStringImpl implements CoreString {
 	}
 
 	@Override
-	public Instant getConsentRecordCreated() {
+	public Instant getCreated() {
 		return consentRecordCreated;
 	}
 
 	@Override
-	public Instant getConsentRecordLastUpdated() {
+	public Instant getLastUpdated() {
 		return consentRecordLastUpdated;
 	}
 
 	@Override
-	public int getConsentManagerProviderId() {
+	public int getCmpId() {
 		return consentManagerProviderId;
 	}
 
 	@Override
-	public int getConsentManagerProviderVersion() {
+	public int getCmpVersion() {
 		return consentManagerProviderVersion;
 	}
 

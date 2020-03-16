@@ -20,7 +20,7 @@ public class TCDecoderTest {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA.cAAAAAAAITg=";
         TCModel tc = TCModelDecoder.decode(tcString);
 
-        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandSignals();
+        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandConsent();
         assertNotNull(outOfBandSignals);
         assertTrue(outOfBandSignals.isVendorAllowed(12));
         assertTrue(outOfBandSignals.isVendorAllowed(23));
@@ -36,7 +36,7 @@ public class TCDecoderTest {
         assertTrue(outOfBandSignals.isVendorDisclosed(65));
         assertTrue(outOfBandSignals.isVendorDisclosed(98));
         assertTrue(outOfBandSignals.isVendorDisclosed(129));
-        final PublisherTC publisherTC = tc.getPublisherPurposesTC();
+        final PublisherTC publisherTC = tc.getPublisherTC();
         assertNotNull(publisherTC);
         assertTrue(publisherTC.isPurposeConsented(1));
         assertTrue(publisherTC.isPurposeLegitimateInterest(24));
@@ -50,7 +50,7 @@ public class TCDecoderTest {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA";
         TCModel tc = TCModelDecoder.decode(tcString);
 
-        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandSignals();
+        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandConsent();
         assertNotNull(outOfBandSignals);
         assertTrue(outOfBandSignals.isVendorAllowed(12));
         assertTrue(outOfBandSignals.isVendorAllowed(23));
@@ -142,7 +142,7 @@ public class TCDecoderTest {
         final String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA." + Util.base64FromBitString(publisherPurposes);
 
         final TCModel tc = TCModelDecoder.decode(base64CoreString);
-        assertEquals(PublisherTCImpl.EMPTY, tc.getPublisherPurposesTC());
+        assertEquals(PublisherTCImpl.EMPTY, tc.getPublisherTC());
     }
 
 }

@@ -7,7 +7,7 @@ public interface TCModel {
 
     CoreString getCoreString();
 
-    OutOfBandConsent getOutOfBandSignals();
+    OutOfBandConsent getOutOfBandConsent();
 
-    PublisherTC getPublisherPurposesTC();
+    PublisherTC getPublisherTC();
 }
