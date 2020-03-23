@@ -1,19 +1,20 @@
 package com.iabtcf.v2.decoder;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BitVectorTest {
+class BitVectorTest {
 
     @Test
-    public void testReadSmall() {
+    void testReadSmall() {
         String bitString = "0000 1000 0000 0001";
         BitVector bitVector = vectorFromBitString(bitString);
         assertEquals(0, bitVector.readNextInt(() -> 4));
@@ -22,35 +23,35 @@ public class BitVectorTest {
     }
 
     @Test
-    public void testReadInteger() {
+    void testReadInteger() {
         String bitString = "0111 1111 1111 1111 1111 1111 1111 1111";
         BitVector bitVector = vectorFromBitString(bitString);
         assertEquals(Integer.MAX_VALUE, bitVector.readNextInt(() -> 32));
     }
 
     @Test
-    public void testReadLong() {
+    void testReadLong() {
         String bitString = "0111 1111 1111 1111 1111 1111 1111 1111" + "1111 1111 1111 1111 1111 1111 1111 1111";
         BitVector bitVector = vectorFromBitString(bitString);
         assertEquals(Long.MAX_VALUE, bitVector.readNextLong(64));
     }
 
     @Test
-    public void tesReadInstant() {
+    void tesReadInstant() {
         String bitString = "001110101101110010100111000111000100";
         BitVector bitVector = vectorFromBitString(bitString);
         assertEquals(Instant.parse("2020-01-26T18:19:25.200Z"), bitVector.readNextInstantFromDeciSecond(() -> 36));
     }
 
     @Test
-    public void tesReadEpochInstant() {
+    void tesReadEpochInstant() {
         String bitString = Stream.generate(() -> "0").limit(36).collect(Collectors.joining());
         BitVector bitVector = vectorFromBitString(bitString);
         assertEquals(Instant.EPOCH, bitVector.readNextInstantFromDeciSecond(() -> 36));
     }
 
     @Test
-    public void testReadBit() {
+    void testReadBit() {
         String bitString = "10101010";
         BitVector bitVector = vectorFromBitString(bitString);
         for (int i = 0; i < bitString.length(); i++) {
@@ -63,7 +64,7 @@ public class BitVectorTest {
     }
 
     @Test
-    public void testReadSixBitString() {
+    void testReadSixBitString() {
         String bitString = "000000 000001";
         BitVector bitVector = vectorFromBitString(bitString);
         assertEquals("AB", bitVector.readNextString(() -> 12));

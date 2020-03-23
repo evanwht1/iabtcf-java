@@ -1,22 +1,25 @@
 package com.iabtcf.v2.decoder;
 
 import com.iabtcf.v2.CoreString;
+import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.TCModel;
 import com.iabtcf.v2.OutOfBandConsent;
 import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.RestrictionType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Base64;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TCDecoderTest {
+
+class TCDecoderTest {
 
     @Test
-    public void testDecodeAllSegments() {
+    void testDecodeAllSegments() {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA.cAAAAAAAITg=";
         TCModel tc = TCModelDecoder.decode(tcString);
 
@@ -46,7 +49,7 @@ public class TCDecoderTest {
     }
 
     @Test
-    public void testParseWithOOBSignals() {
+    void testParseWithOOBSignals() {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA";
         TCModel tc = TCModelDecoder.decode(tcString);
 
@@ -69,7 +72,7 @@ public class TCDecoderTest {
     }
 
     @Test
-    public void testPublisherRestrictions() {
+    void testPublisherRestrictions() {
         String bitString =
                 "0000100011101011100"
                 + "1000000000000001010"
@@ -105,39 +108,39 @@ public class TCDecoderTest {
         TCModel tc = TCModelDecoder.decode(base64CoreString);
         final CoreString coreString = tc.getCoreString();
 
-        assertEquals(RestrictionType.REQUIRE_CONSENT, coreString.getPublisherRestriction(1, 1));
-        assertEquals(RestrictionType.UNDEFINED, coreString.getPublisherRestriction(1, 2));
-        assertEquals(RestrictionType.NOT_ALLOWED, coreString.getPublisherRestriction(2, 2));
-        assertEquals(RestrictionType.REQUIRE_LEGITIMATE_INTEREST, coreString.getPublisherRestriction(3, 3));
-        assertEquals(RestrictionType.UNDEFINED, coreString.getPublisherRestriction(4, 1));
+        assertEquals(RestrictionType.REQUIRE_CONSENT, coreString.getPublisherRestriction(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE, 1));
+        assertEquals(RestrictionType.UNDEFINED, coreString.getPublisherRestriction(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE, 2));
+        assertEquals(RestrictionType.NOT_ALLOWED, coreString.getPublisherRestriction(Purpose.SELECT_BASIC_ADS, 2));
+        assertEquals(RestrictionType.REQUIRE_LEGITIMATE_INTEREST, coreString.getPublisherRestriction(Purpose.CREATE_PERSONALISED_ADS_PROFILE, 3));
+        assertEquals(RestrictionType.UNDEFINED, coreString.getPublisherRestriction(Purpose.SELECT_PERSONAL_ADS, 1));
     }
 
     @Test
-    public void testCoreStringAndPublisherTC() {
+    void testCoreStringAndPublisherTC() {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IFoEUQQgAIQwgIwQABAEAAAAOIAACAIAAAAQAIAgEAACEAAAAAgAQBAAAAAAAGBAAgAAAAAAAFAAECAAAgAAQARAEQAAAAAJAAIAAgAAAYQEAAAQmAgBC3ZAYzUw";
         assertNotNull(TCModelDecoder.decode(tcString));
     }
 
     @Test
-    public void testCoreStringOnly() {
+    void testCoreStringOnly() {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA";
         assertNotNull(TCModelDecoder.decode(tcString));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testVersionOne() {
+    @Test()
+    void testVersionOne() {
         String tcString = "BObdrPUOevsguAfDqFENCNAAAAAmeAAA";
-        TCModelDecoder.decode(tcString);
+        assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(tcString));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testUnsupportedVersion() {
+    @Test()
+    void testUnsupportedVersion() {
         String tcString = Base64.getUrlEncoder().encodeToString(new byte[] {13 });
-        TCModelDecoder.decode(tcString);
+        assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(tcString));
     }
 
     @Test
-    public void testDefaultSegmentType() {
+    void testDefaultSegmentType() {
         final String publisherPurposes = "00000000"; // segment type
         final String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA." + Util.base64FromBitString(publisherPurposes);
 

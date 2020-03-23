@@ -1,19 +1,19 @@
 package com.iabtcf.v2.decoder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
 
 import static com.iabtcf.v2.Field.Vendors.SEGMENT_TYPE;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author ewhite 2/22/20
  */
-public class VendorsDecoderTest {
+class VendorsDecoderTest {
 
 	@Test
-	public void testParseDisclosedVendors() {
+	void testParseDisclosedVendors() {
 		String base64CoreString = "IBAgAAAgAIAwgAgAAAAEAAAACA";
 		final BitVector bitVector = Util.vectorFromBase64String(base64CoreString);
 		bitVector.readNextInt(SEGMENT_TYPE);
@@ -29,7 +29,7 @@ public class VendorsDecoderTest {
 	}
 
 	@Test
-	public void testParseAllowedVendors() {
+	void testParseAllowedVendors() {
 		String base64CoreString = "QAagAQAgAIAwgA";
 		final BitVector bitVector = Util.vectorFromBase64String(base64CoreString);
 		bitVector.readNextInt(SEGMENT_TYPE);

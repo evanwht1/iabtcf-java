@@ -1,19 +1,18 @@
 package com.iabtcf.v2;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author evanwht1@gmail.com
  */
-public class SegmentTypeTest {
+class SegmentTypeTest {
 
-	@Test
-	public void testDecode() {
-		assertEquals(SegmentType.DEFAULT, SegmentType.valueOf(SegmentType.DEFAULT.getValue()));
-		assertEquals(SegmentType.DISCLOSED_VENDOR, SegmentType.valueOf(SegmentType.DISCLOSED_VENDOR.getValue()));
-		assertEquals(SegmentType.ALLOWED_VENDOR, SegmentType.valueOf(SegmentType.ALLOWED_VENDOR.getValue()));
-		assertEquals(SegmentType.PUBLISHER_TC, SegmentType.valueOf(SegmentType.PUBLISHER_TC.getValue()));
+	@ParameterizedTest
+	@EnumSource(SegmentType.class)
+	void testDecode(SegmentType type) {
+		assertEquals(type, SegmentType.valueOf(type.getValue()));
 	}
 }

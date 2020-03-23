@@ -1,25 +1,25 @@
 package com.iabtcf.v2.decoder;
 
 import com.iabtcf.v2.CoreString;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
 import static com.iabtcf.v2.Field.CoreString.VERSION;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author ewhite 2/22/20
  */
-public class CoreStringDecoderTest {
+class CoreStringDecoderTest {
 
 	 /**
 	  * the string was created here https://www.iabtcf.com/#/encode
 	  */
 	@Test
-	public void testParse() {
+	void testParse() {
 		String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA";
 		final BitVector bitVector = Util.vectorFromBase64String(base64CoreString);
 		CoreString coreString = CoreStringDecoder.decode(bitVector.readNextInt(VERSION), bitVector);

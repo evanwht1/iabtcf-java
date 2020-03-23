@@ -3,18 +3,19 @@ package com.iabtcf.v2.decoder;
 import com.iabtcf.v2.Field;
 import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.SegmentType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * @author ewhite 2/22/20
  */
-public class PublisherTCDecoderTest {
+class PublisherTCDecoderTest {
 
 	@Test
-	public void testPublisherPurposes() {
+	void testPublisherPurposes() {
 		String publisherPurposes =
 				"011"                           // segment type
 				+ "100000000000000000000000"    // PubPurposesConsent
