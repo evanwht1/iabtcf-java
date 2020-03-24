@@ -1,18 +1,16 @@
 package com.iabtcf.v2;
 
-
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RestrictionTypeTest {
 
-	@Test
-	void testDecode() {
-		assertEquals(RestrictionType.NOT_ALLOWED, RestrictionType.valueOf(RestrictionType.NOT_ALLOWED.getValue()));
-		assertEquals(RestrictionType.REQUIRE_CONSENT, RestrictionType.valueOf(RestrictionType.REQUIRE_CONSENT.getValue()));
-		assertEquals(RestrictionType.REQUIRE_LEGITIMATE_INTEREST, RestrictionType.valueOf(RestrictionType.REQUIRE_LEGITIMATE_INTEREST.getValue()));
-		assertEquals(RestrictionType.UNDEFINED, RestrictionType.valueOf(RestrictionType.UNDEFINED.getValue()));
+	@ParameterizedTest
+	@EnumSource(RestrictionType.class)
+	void testDecode(RestrictionType type) {
+		assertEquals(type, RestrictionType.valueOf(type.getValue()));
 	}
 
 }

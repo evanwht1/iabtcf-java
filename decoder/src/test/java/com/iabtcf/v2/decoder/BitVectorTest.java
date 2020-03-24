@@ -1,6 +1,5 @@
 package com.iabtcf.v2.decoder;
 
-
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

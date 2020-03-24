@@ -1,14 +1,14 @@
 package com.iabtcf.v2.decoder;
 
 import com.iabtcf.v2.CoreString;
-import com.iabtcf.v2.Purpose;
-import com.iabtcf.v2.TCModel;
 import com.iabtcf.v2.OutOfBandConsent;
 import com.iabtcf.v2.PublisherTC;
+import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
+import com.iabtcf.v2.TCModel;
 import org.junit.jupiter.api.Test;
-
-import java.util.Base64;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -115,28 +115,19 @@ class TCDecoderTest {
         assertEquals(RestrictionType.UNDEFINED, coreString.getPublisherRestriction(Purpose.SELECT_PERSONAL_ADS, 1));
     }
 
-    @Test
-    void testCoreStringAndPublisherTC() {
-        String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IFoEUQQgAIQwgIwQABAEAAAAOIAACAIAAAAQAIAgEAACEAAAAAgAQBAAAAAAAGBAAgAAAAAAAFAAECAAAgAAQARAEQAAAAAJAAIAAgAAAYQEAAAQmAgBC3ZAYzUw";
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IFoEUQQgAIQwgIwQABAEAAAAOIAACAIAAAAQAIAgEAACEAAAAAgAQBAAAAAAAGBAAgAAAAAAAFAAECAAAgAAQARAEQAAAAAJAAIAAgAAAYQEAAAQmAgBC3ZAYzUw",
+            "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA"
+    })
+    void testVanillaDecode(String tcString) {
         assertNotNull(TCModelDecoder.decode(tcString));
     }
 
-    @Test
-    void testCoreStringOnly() {
-        String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA";
-        assertNotNull(TCModelDecoder.decode(tcString));
-    }
-
-    @Test()
-    void testVersionOne() {
-        String tcString = "BObdrPUOevsguAfDqFENCNAAAAAmeAAA";
-        assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(tcString));
-    }
-
-    @Test()
-    void testUnsupportedVersion() {
-        String tcString = Base64.getUrlEncoder().encodeToString(new byte[] {13 });
-        assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(tcString));
+    @ParameterizedTest
+    @ValueSource(strings = {"BObdrPUOevsguAfDqFENCNAAAAAmeAAA", "D"})
+    void testBadString(String badString) {
+        assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(badString));
     }
 
     @Test
