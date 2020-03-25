@@ -37,7 +37,7 @@ class Bits {
 
 	void write(int length, int value) {
 		ensureWriteable(length);
-		for (int shiftPos = length; shiftPos > 0; shiftPos--) {
+		for (int shiftPos = length-1; shiftPos >= 0; shiftPos--) {
 			writeBit((value >> shiftPos & 1) == 1);
 		}
 	}
@@ -87,8 +87,9 @@ class Bits {
 	}
 
 	byte[] toByteArray() {
-		byte[] arr = new byte[pos];
-		System.arraycopy(buffer, 0, arr, 0, pos);
+		int byteLength = (pos / Byte.SIZE) + ((pos % Byte.SIZE) > 1 ? 1 : 0);
+		byte[] arr = new byte[byteLength];
+		System.arraycopy(buffer, 0, arr, 0, byteLength);
 		return arr;
 	}
 }
