@@ -7,6 +7,7 @@ import com.iabtcf.v2.TCModel;
 
 import java.util.BitSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -17,7 +18,9 @@ class BitVectorGDPRTCModel implements TCModel {
 
     private final Supplier<CoreString> coreStringSupplier;
     private CoreString coreString;
+
     private OutOfBandConsent outOfBandVendors;
+
     private final Supplier<PublisherTC> publisherPurposesSupplier;
     private PublisherTC publisherPurposes;
 
@@ -25,8 +28,6 @@ class BitVectorGDPRTCModel implements TCModel {
         coreStringSupplier = b.coreString;
         if (b.disclosedVendors != Constants.EMPTY_SUPPLIER || b.allowedVendors != Constants.EMPTY_SUPPLIER) {
             outOfBandVendors = new OutOfBandVendors(b.disclosedVendors, b.allowedVendors);
-        } else {
-            outOfBandVendors = OutOfBandVendors.EMPTY;
         }
         publisherPurposesSupplier = b.publisherPurposes;
     }
@@ -44,16 +45,16 @@ class BitVectorGDPRTCModel implements TCModel {
     }
 
     @Override
-    public OutOfBandConsent getOutOfBandConsent() {
-        return outOfBandVendors;
+    public Optional<OutOfBandConsent> getOutOfBandConsent() {
+        return Optional.ofNullable(outOfBandVendors);
     }
 
     @Override
-    public PublisherTC getPublisherTC() {
-        if (publisherPurposes == null) {
+    public Optional<PublisherTC> getPublisherTC() {
+        if (publisherPurposes == null && publisherPurposesSupplier != null) {
             publisherPurposes = publisherPurposesSupplier.get();
         }
-        return publisherPurposes;
+        return Optional.ofNullable(publisherPurposes);
     }
 
     @Override
@@ -89,7 +90,7 @@ class BitVectorGDPRTCModel implements TCModel {
         private Supplier<CoreString> coreString;
         private Supplier<BitSet> disclosedVendors = Constants.EMPTY_SUPPLIER;
         private Supplier<BitSet> allowedVendors = Constants.EMPTY_SUPPLIER;
-        private Supplier<PublisherTC> publisherPurposes = () -> PublisherTCImpl.EMPTY;
+        private Supplier<PublisherTC> publisherPurposes;
 
         private Builder() {}
 

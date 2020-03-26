@@ -2,6 +2,7 @@ package com.iabtcf.v2.encoder;
 
 import com.iabtcf.v2.Field;
 
+import java.time.Instant;
 import java.util.BitSet;
 
 /**
@@ -35,6 +36,10 @@ class Bits {
 		write(field.getLength(), value);
 	}
 
+	void write(Field field, Instant value) {
+		write(field.getLength(), value.toEpochMilli() / 100);
+	}
+
 	void write(Field field, long value) {
 		write(field.getLength(), value);
 	}
@@ -51,8 +56,8 @@ class Bits {
 	}
 
 	void write(int length, BitSet set) {
-		for (int i = 0; i < length; i++) {
-			write(set.get(i+1));
+		for (int i = 1; i <= length; i++) {
+			write(set.get(i));
 		}
 	}
 

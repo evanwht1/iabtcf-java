@@ -36,8 +36,8 @@ class TCModelEncoder {
 	private static String writeCoreString(final TCModelBuilder builder) {
 		final Bits bits = new Bits();
 		bits.write(CoreString.VERSION, builder.version);
-		bits.write(CoreString.CREATED, builder.created.toEpochMilli());
-		bits.write(CoreString.LAST_UPDATED, builder.lastUpdated.toEpochMilli());
+		bits.write(CoreString.CREATED, builder.created);
+		bits.write(CoreString.LAST_UPDATED, builder.lastUpdated);
 		bits.write(CoreString.CMP_ID, builder.cmpId);
 		bits.write(CoreString.CMP_VERSION, builder.cmpVersion);
 		bits.write(CoreString.CONSENT_SCREEN, builder.consentScreen);

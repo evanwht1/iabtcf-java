@@ -12,8 +12,6 @@ import java.util.stream.IntStream;
  */
 class OutOfBandVendors implements OutOfBandConsent {
 
-	static final OutOfBandVendors EMPTY = new OutOfBandVendors(() -> Constants.EMPTY_BIT_SET, () -> Constants.EMPTY_BIT_SET);
-
 	private final Supplier<BitSet> disclosedVendorSupplier;
 	private BitSet disclosedVendor;
 	private final Supplier<BitSet> allowedVendorsSupplier;
