@@ -28,17 +28,17 @@ final class VendorsDecoder {
 	 *          to {@link Field.CoreString#PUBLISHER_CC}, therefor the bit vector should be at the correct position
 	 *          before calling this. Unit tests should mimic this behavior accordingly.
 	 *
-	 * @param bitVector bit vector to read data from
+	 * @param bitInputStream bit vector to read data from
 	 * @return the new position that was read to
 	 */
-	static BitSet decode(BitVector bitVector) {
-		int maxVendor = bitVector.readNextInt(MAX_VENDOR_ID);
-		boolean isRangeEncoding = bitVector.readNextBit(IS_RANGE_ENCODING);
+	static BitSet decode(BitInputStream bitInputStream) {
+		int maxVendor = bitInputStream.readInt(MAX_VENDOR_ID);
+		boolean isRangeEncoding = bitInputStream.readBit(IS_RANGE_ENCODING);
 
 		if (!isRangeEncoding) {
 			final BitSet set = new BitSet(maxVendor);
 			for (int i = 0; i < maxVendor; i++) {
-				boolean hasVendorConsent = bitVector.readNextBit(BIT_FIELD);
+				boolean hasVendorConsent = bitInputStream.readBit(BIT_FIELD);
 				if (hasVendorConsent) {
 					// vendors are 1 indexed so add 1 to current index
 					set.set(i + 1);
@@ -46,18 +46,18 @@ final class VendorsDecoder {
 			}
 			return set;
 		} else {
-			return vendorIdsFromRange(bitVector, maxVendor);
+			return vendorIdsFromRange(bitInputStream, maxVendor);
 		}
 	}
 
-	static BitSet vendorIdsFromRange(BitVector bitVector, int maxVendor) {
+	static BitSet vendorIdsFromRange(BitInputStream bitInputStream, int maxVendor) {
 		final BitSet set = new BitSet(maxVendor);
-		int numberOfVendorEntries = bitVector.readNextInt(NUM_ENTRIES);
+		int numberOfVendorEntries = bitInputStream.readInt(NUM_ENTRIES);
 		for (int i = 0; i < numberOfVendorEntries; i++) {
-			boolean isRangeEntry = bitVector.readNextBit(IS_A_RANGE);
-			int startOrOnlyVendorId = bitVector.readNextInt(START_OR_ONLY_VENDOR_ID);
+			boolean isRangeEntry = bitInputStream.readBit(IS_A_RANGE);
+			int startOrOnlyVendorId = bitInputStream.readInt(START_OR_ONLY_VENDOR_ID);
 			if (isRangeEntry) {
-				int endVendorId = bitVector.readNextInt(END_VENDOR_ID);
+				int endVendorId = bitInputStream.readInt(END_VENDOR_ID);
 				set.set(startOrOnlyVendorId, endVendorId + 1);
 			} else {
 				set.set(startOrOnlyVendorId);

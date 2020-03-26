@@ -2,7 +2,6 @@ package com.iabtcf.v2.decoder;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,13 +34,13 @@ public class Util {
 		return Base64.getUrlEncoder().encodeToString(bytes);
 	}
 
-	static BitVector vectorFromBase64String(final String str) {
+	static BitInputStream vectorFromBase64String(final String str) {
 		byte[] bytes = DECODER.decode(str);
-		return BitVector.from(bytes);
+		return BitInputStream.from(bytes);
 	}
 
-	static BitVector vectorFromBitString(final String str) {
+	static BitInputStream vectorFromBitString(final String str) {
 		byte[] bytes = DECODER.decode(base64FromBitString(str));
-		return BitVector.from(bytes);
+		return BitInputStream.from(bytes);
 	}
 }

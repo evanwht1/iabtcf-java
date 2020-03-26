@@ -22,16 +22,16 @@ class PublisherTCDecoder {
 	 *          will have already read the {@link Field.PublisherTC#SEGMENT_TYPE} and therefor the bit vector should be at the
 	 *          4th bit before calling this. Unit tests should mimic this behavior accordingly.
 	 *
-	 * @param bitVector bitvector to read from
+	 * @param bitInputStream bitvector to read from
 	 * @return PublisherTC fields contained in the bit vector
 	 */
-	static PublisherTCImpl decode(BitVector bitVector) {
-		final BitSet consents = bitVector.readNextBitSet(PUB_PURPOSE_CONSENT.getLength());
-		final BitSet liTransparency = bitVector.readNextBitSet(PUB_PURPOSES_LI_TRANSPARENCY.getLength());
+	static PublisherTCImpl decode(BitInputStream bitInputStream) {
+		final BitSet consents = bitInputStream.readBitSet(PUB_PURPOSE_CONSENT.getLength());
+		final BitSet liTransparency = bitInputStream.readBitSet(PUB_PURPOSES_LI_TRANSPARENCY.getLength());
 
-		final int numberOfCustomPurposes = bitVector.readNextInt(NUM_CUSTOM_PURPOSES);
-		final BitSet customPurposes = bitVector.readNextBitSet(numberOfCustomPurposes);
-		final BitSet customLiTransparency = bitVector.readNextBitSet(numberOfCustomPurposes);
+		final int numberOfCustomPurposes = bitInputStream.readInt(NUM_CUSTOM_PURPOSES);
+		final BitSet customPurposes = bitInputStream.readBitSet(numberOfCustomPurposes);
+		final BitSet customLiTransparency = bitInputStream.readBitSet(numberOfCustomPurposes);
 
 		return new PublisherTCImpl(consents, liTransparency, customPurposes, customLiTransparency);
 	}

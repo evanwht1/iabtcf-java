@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * @author SleimanJneidi
  * @author evanwht1
  */
-class BitVectorGDPRTCModel implements TCModel {
+class TCModelImpl implements TCModel {
 
     private final Supplier<CoreString> coreStringSupplier;
     private CoreString coreString;
@@ -24,7 +24,7 @@ class BitVectorGDPRTCModel implements TCModel {
     private final Supplier<PublisherTC> publisherPurposesSupplier;
     private PublisherTC publisherPurposes;
 
-    private BitVectorGDPRTCModel(final Builder b) {
+    private TCModelImpl(final Builder b) {
         coreStringSupplier = b.coreString;
         if (b.disclosedVendors != Constants.EMPTY_SUPPLIER || b.allowedVendors != Constants.EMPTY_SUPPLIER) {
             outOfBandVendors = new OutOfBandVendors(b.disclosedVendors, b.allowedVendors);
@@ -65,7 +65,7 @@ class BitVectorGDPRTCModel implements TCModel {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final BitVectorGDPRTCModel that = (BitVectorGDPRTCModel) o;
+        final TCModelImpl that = (TCModelImpl) o;
         return coreString.equals(that.coreString) &&
                outOfBandVendors.equals(that.outOfBandVendors) &&
                Objects.equals(publisherPurposes, that.publisherPurposes);
@@ -115,7 +115,7 @@ class BitVectorGDPRTCModel implements TCModel {
         }
 
         TCModel build() {
-            return new BitVectorGDPRTCModel(this);
+            return new TCModelImpl(this);
         }
     }
 }
