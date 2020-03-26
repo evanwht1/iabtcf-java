@@ -4,12 +4,12 @@ import com.iabtcf.v2.Field;
 import com.iabtcf.v2.Field.CoreString;
 import com.iabtcf.v2.Field.PublisherRestrictions;
 import com.iabtcf.v2.Field.Vendors;
+import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
 import com.iabtcf.v2.SegmentType;
 
 import java.util.Base64;
 import java.util.EnumMap;
-import java.util.Map;
 
 /**
  * @author evanwht1@gmail.com
@@ -36,8 +36,8 @@ class TCModelEncoder {
 	private static String writeCoreString(final TCModelBuilder builder) {
 		final Bits bits = new Bits();
 		bits.write(CoreString.VERSION, builder.version);
-		bits.write(CoreString.CREATED, builder.created.getEpochSecond() + builder.created.getNano() * 100);
-		bits.write(CoreString.LAST_UPDATED, builder.lastUpdated.getEpochSecond() + builder.lastUpdated.getNano() * 100);
+		bits.write(CoreString.CREATED, builder.created.toEpochMilli());
+		bits.write(CoreString.LAST_UPDATED, builder.lastUpdated.toEpochMilli());
 		bits.write(CoreString.CMP_ID, builder.cmpId);
 		bits.write(CoreString.CMP_VERSION, builder.cmpVersion);
 		bits.write(CoreString.CONSENT_SCREEN, builder.consentScreen);
@@ -101,11 +101,11 @@ class TCModelEncoder {
 		}
 	}
 
-	private static void writePubRestriction(Bits bits, Map<Integer, EnumMap<RestrictionType, RangeData>> restrictions) {
-		int numRestrictions = restrictions.size() + restrictions.values().stream().mapToInt(EnumMap::size).sum();
+	private static void writePubRestriction(Bits bits, EnumMap<Purpose, EnumMap<RestrictionType, RangeData>> restrictions) {
+		int numRestrictions = restrictions.values().stream().mapToInt(EnumMap::size).sum();
 		bits.write(PublisherRestrictions.NUM_PUB_RESTRICTIONS, numRestrictions);
 		restrictions.forEach((p, value) -> value.forEach((r, vendors) -> {
-			bits.write(PublisherRestrictions.PURPOSE_ID, p);
+			bits.write(PublisherRestrictions.PURPOSE_ID, p.getId());
 			bits.write(PublisherRestrictions.RESTRICTION_TYPE, r.getValue());
 			bits.write(PublisherRestrictions.NUM_ENTRIES, vendors.size());
 			vendors.getRanges().forEach(range -> {

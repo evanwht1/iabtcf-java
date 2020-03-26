@@ -52,7 +52,7 @@ class Bits {
 
 	void write(int length, BitSet set) {
 		for (int i = 0; i < length; i++) {
-			write(set.get(i));
+			write(set.get(i+1));
 		}
 	}
 

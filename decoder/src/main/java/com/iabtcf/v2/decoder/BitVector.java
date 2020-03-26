@@ -35,7 +35,7 @@ class BitVector {
     }
 
     Instant readNextInstantFromDeciSecond(Field field) {
-        long epochDeci = readNextLong(field.getLength()) * 100;
+        long epochDeci = readNextLong(field.getLength());
         return Instant.ofEpochMilli(epochDeci);
     }
 

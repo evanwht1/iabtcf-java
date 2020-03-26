@@ -14,4 +14,8 @@ public enum SpecialFeature {
 	SpecialFeature(final int id) {
 		this.id = id;
 	}
+
+	public int getId() {
+		return id;
+	}
 }

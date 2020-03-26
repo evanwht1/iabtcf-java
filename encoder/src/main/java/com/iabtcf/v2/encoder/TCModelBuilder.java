@@ -3,14 +3,14 @@ package com.iabtcf.v2.encoder;
 import com.iabtcf.v2.CoreString;
 import com.iabtcf.v2.OutOfBandConsent;
 import com.iabtcf.v2.PublisherTC;
+import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
+import com.iabtcf.v2.SpecialFeature;
 import com.iabtcf.v2.TCModel;
 
 import java.time.Instant;
 import java.util.BitSet;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author evanwht1@gmail.com
@@ -35,7 +35,7 @@ public class TCModelBuilder {
 	BitSet purposesLITransparency = new BitSet();
 	RangeData vendorConsents = new RangeData();
 	RangeData vendorLegitimateInterests = new RangeData();
-	Map<Integer, EnumMap<RestrictionType, RangeData>> publisherRestrictions = new HashMap<>();
+	EnumMap<Purpose, EnumMap<RestrictionType, RangeData>> publisherRestrictions = new EnumMap<>(Purpose.class);
 
 	// OOB
 	RangeData disclosedVendors = new RangeData();
@@ -47,9 +47,9 @@ public class TCModelBuilder {
 	BitSet publisherCustomPurposes = new BitSet();
 	BitSet publisherCustomPurposesLI = new BitSet();
 
-	private TCModelBuilder() {}
+	public TCModelBuilder() {}
 
-	private TCModelBuilder(TCModel model) {
+	public TCModelBuilder(TCModel model) {
 		CoreString coreString = model.getCoreString();
 		version = coreString.getVersion();
 		created = coreString.getCreated();
@@ -72,7 +72,7 @@ public class TCModelBuilder {
 		coreString.getAllPublisherRestrictions().forEach(pr -> {
 			RangeData rangeData = new RangeData();
 			pr.getAllVendors().forEach(rangeData::add);
-			publisherRestrictions.computeIfAbsent(pr.getPurpose().getId(), p -> new EnumMap<>(RestrictionType.class))
+			publisherRestrictions.computeIfAbsent(pr.getPurpose(), p -> new EnumMap<>(RestrictionType.class))
 								 .put(pr.getRestrictionType(), rangeData);
 
 		});
@@ -158,13 +158,28 @@ public class TCModelBuilder {
 		return this;
 	}
 
+	public TCModelBuilder addSpecialFeatureOptedIn(final SpecialFeature specialFeature) {
+		specialFeaturesOptInts.set(specialFeature.getId());
+		return this;
+	}
+
 	public TCModelBuilder addPurposeConsent(final int val) {
 		purposesConsent.set(val);
 		return this;
 	}
 
+	public TCModelBuilder addPurposeConsent(final Purpose purpose) {
+		purposesConsent.set(purpose.getId());
+		return this;
+	}
+
 	public TCModelBuilder addPurposesLegitimateInterest(final int val) {
 		purposesLITransparency.set(val);
+		return this;
+	}
+
+	public TCModelBuilder addPurposesLegitimateInterest(final Purpose purpose) {
+		purposesLITransparency.set(purpose.getId());
 		return this;
 	}
 
@@ -181,9 +196,15 @@ public class TCModelBuilder {
 	public TCModelBuilder addPublisherRestriction(final int vendor,
 												  final int purpose,
 												  final RestrictionType restrictionType) {
+		return addPublisherRestriction(vendor, Purpose.valueOf(purpose), restrictionType);
+	}
+
+	public TCModelBuilder addPublisherRestriction(final int vendor,
+	                                              final Purpose purpose,
+	                                              final RestrictionType restrictionType) {
 		publisherRestrictions.computeIfAbsent(purpose, p -> new EnumMap<>(RestrictionType.class))
-							 .computeIfAbsent(restrictionType, r -> new RangeData())
-							 .add(vendor);
+		                     .computeIfAbsent(restrictionType, r -> new RangeData())
+		                     .add(vendor);
 		return this;
 	}
 
@@ -204,6 +225,10 @@ public class TCModelBuilder {
 	public TCModelBuilder addPublisherPurposeConsent(final int purpose) {
 		publisherPurposes.set(purpose);
 		return this;
+	}
+
+	public TCModelBuilder addPublisherPurposeConsent(final Purpose purpose) {
+		return addPublisherPurposeConsent(purpose.getId());
 	}
 
 	public TCModelBuilder addPublisherPurposeLegitimateInterest(final int purpose) {
