@@ -2,6 +2,10 @@ package com.iabtcf.v2.encoder;
 
 import org.junit.jupiter.api.Test;
 
+import java.nio.ByteBuffer;
+import java.util.BitSet;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -10,25 +14,60 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BitsTest {
 
 	@Test
-	void testWriteByte() {
-		Bits bits = new Bits();
+	void testWriteByteMax() {
+		final Bits bits = new Bits();
 		bits.write(Byte.SIZE, Byte.MAX_VALUE);
 		byte[] bytes = bits.toByteArray();
 		assertEquals(1, bytes.length);
-		System.out.println(Integer.toBinaryString(Byte.MAX_VALUE));
-		System.out.println(Integer.toBinaryString(bytes[0]));
-		assertEquals(Byte.MAX_VALUE, bytes[0]);
+		assertEquals(Byte.MAX_VALUE, (bytes[0]));
+	}
+
+	@Test
+	void testWritFullByte() {
+		final Bits bits = new Bits();
+		bits.write(Byte.SIZE, 0xff);
+		byte[] bytes = bits.toByteArray();
+		assertEquals(1, bytes.length);
+		assertEquals(0xff, (bytes[0] & 0xff));
 	}
 
 	@Test
 	void testWriteInt() {
-		Bits bits = new Bits();
-		bits.write(Integer.MAX_VALUE, Integer.SIZE);
+		final Bits bits = new Bits();
+		bits.write(Integer.SIZE, Integer.MAX_VALUE);
 		byte[] bytes = bits.toByteArray();
 		assertEquals((Integer.SIZE / Byte.SIZE), bytes.length);
-		assertEquals(Byte.MAX_VALUE, bytes[0]);
-		assertEquals(Byte.MAX_VALUE, bytes[1]);
-		assertEquals(Byte.MAX_VALUE, bytes[2]);
-		assertEquals(Byte.MAX_VALUE, bytes[3]);
+		assertEquals(Integer.MAX_VALUE, ByteBuffer.wrap(bytes).getInt());
+	}
+
+	@Test
+	void testWriteLong() {
+		final Bits bits = new Bits();
+		bits.write(Long.SIZE, Long.MAX_VALUE);
+		byte[] bytes = bits.toByteArray();
+		assertEquals((Long.SIZE / Byte.SIZE), bytes.length);
+		assertEquals(Long.MAX_VALUE, ByteBuffer.wrap(bytes).getLong());
+	}
+
+	@Test
+	void testWriteString() {
+		final Bits bits = new Bits();
+		bits.write("AB");
+		byte[] bytes = bits.toByteArray();
+		assertEquals(2, bytes.length);
+		assertEquals(0, bytes[0]);
+		assertEquals(16, bytes[1]);
+	}
+
+	@Test
+	void testWriteBitSet() {
+		final Bits bits = new Bits();
+		final BitSet bitSet = new BitSet();
+		bitSet.set(1);
+		bitSet.set(6);
+		bits.write(Byte.SIZE, bitSet);
+		byte[] bytes = bits.toByteArray();
+		assertEquals(1, bytes.length);
+		assertArrayEquals(bitSet.toByteArray(), bytes);
 	}
 }

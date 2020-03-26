@@ -1,6 +1,7 @@
 package com.iabtcf.v2.encoder;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -9,41 +10,49 @@ import java.util.TreeSet;
  */
 public class RangeData {
 
-	private int maxId;
-	private Set<Range> ranges;
-
-	RangeData() {
-		maxId = -1;
-		ranges = new TreeSet<>();
-	}
+	private int maxId = -1;
+	private Set<Range> ranges = new TreeSet<>();
 
 	boolean isEmpty() {
 		return maxId == -1;
 	}
 
-	void add(final int i) {
-		maxId = Math.max(i, maxId);
+	void add(final int... ids) {
+		for (int id : ids) {
+			add(id);
+		}
+	}
+
+	void add(final int id) {
+		if (id < 0) {
+			throw new IllegalArgumentException("input must be greater than 0");
+		}
+		maxId = Math.max(id, maxId);
 		// first see if this can be added to an existing range
 		boolean needsNewRange = true;
 		for (Range range : ranges) {
-			if (range.add(i)) {
+			if (range.add(id)) {
 				compactRanges();
 				needsNewRange = false;
 				break;
 			}
 		}
 		if (needsNewRange) {
-			ranges.add(new Range(i));
+			ranges.add(new Range(id));
 		}
 	}
 
-	public boolean get(int i) {
+	boolean get(int id) {
 		for (Range range: ranges) {
-			if (range.contains(i)) {
+			if (range.contains(id)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	int getMaxId() {
+		return maxId;
 	}
 
 	private void compactRanges() {
@@ -59,16 +68,38 @@ public class RangeData {
 		}
 	}
 
-	public int getMaxId() {
-		return maxId;
-	}
-
 	public Set<Range> getRanges() {
 		return ranges;
 	}
 
 	public int size() {
 		return ranges.size();
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		final RangeData rangeData = (RangeData) o;
+		return maxId == rangeData.maxId &&
+		       ranges.equals(rangeData.ranges);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(maxId, ranges);
+	}
+
+	@Override
+	public String toString() {
+		return "RangeData{" +
+		       "maxId: " + maxId +
+		       ", ranges: " + ranges +
+		       '}';
 	}
 
 	static class Range implements Comparable<Range> {
@@ -83,6 +114,10 @@ public class RangeData {
 		Range(final int lower, final int upper) {
 			this.lower = lower;
 			this.upper = upper;
+		}
+
+		boolean isARange() {
+			return lower != upper;
 		}
 
 		boolean add(int val) {
@@ -126,6 +161,32 @@ public class RangeData {
 				// SHOULD NEVER HAVE RANGES THAT INTERSECT. those should be merged
 				return 0;
 			}
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+			final Range range = (Range) o;
+			return lower == range.lower &&
+			       upper == range.upper;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(lower, upper);
+		}
+
+		@Override
+		public String toString() {
+			return "Range{" +
+			       "lower: " + lower +
+			       ", upper: " + upper +
+			       '}';
 		}
 	}
 }

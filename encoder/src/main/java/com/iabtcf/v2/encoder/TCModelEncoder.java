@@ -83,7 +83,7 @@ class TCModelEncoder {
 	private static void writeRange(Bits bits, RangeData data) {
 		int maxVendor = data.getMaxId();
 		bits.write(Vendors.MAX_VENDOR_ID, maxVendor);
-		if (shouldRangeEncode(maxVendor, data)) {
+		if (!shouldRangeEncode(maxVendor, data)) {
 			bits.write(Vendors.IS_RANGE_ENCODING, false);
 			for (int i = 0; i < maxVendor; i++) {
 				bits.write(data.get(i));
@@ -92,9 +92,9 @@ class TCModelEncoder {
 			bits.write(Vendors.IS_RANGE_ENCODING, true);
 			bits.write(Vendors.NUM_ENTRIES, data.size());
 			data.getRanges().forEach(r -> {
-				bits.write(Vendors.IS_A_RANGE, r.lower != r.upper);
+				bits.write(Vendors.IS_A_RANGE, r.isARange());
 				bits.write(Vendors.START_OR_ONLY_VENDOR_ID, r.lower);
-				if (r.upper != r.lower) {
+				if (r.isARange()) {
 					bits.write(Vendors.END_VENDOR_ID, r.upper);
 				}
 			});
@@ -133,8 +133,7 @@ class TCModelEncoder {
 	 * @return if the set would be better encoded as a bit field.
 	 */
 	private static boolean shouldRangeEncode(int maxId, RangeData rangeData) {
-		// TODO actually think of correct logic here (might need to keep a running flag as things are added to the set
-		//  in the builder)
+		// TODO actually think of correct logic here (might need to keep a running flag as things are added to the set in the builder)
 		return maxId < MIN_RANGE_ENCODING_LENGTH || (maxId / rangeData.size()) < 10;
 	}
 }
