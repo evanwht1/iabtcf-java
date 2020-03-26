@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -68,6 +67,7 @@ public class BitsTest {
 		bits.write(Byte.SIZE, bitSet);
 		byte[] bytes = bits.toByteArray();
 		assertEquals(1, bytes.length);
-		assertArrayEquals(bitSet.toByteArray(), bytes);
+		// bit sets are 1 indexed but we write in 0 index so 0th and 5th bit should be set resulting in -124
+		assertEquals(-124, bytes[0]);
 	}
 }

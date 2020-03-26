@@ -35,8 +35,8 @@ public class TCModelEncoderTest {
 				.isPurposeOneTreatment(true)
 				.publisherCountryCode("US")
 				.consentScreen(7)
-				.consentRecordCreated(Instant.ofEpochMilli(10L))
-				.consentRecordLastUpdated(Instant.ofEpochMilli(11L))
+				.consentRecordCreated(Instant.ofEpochMilli(10000L))
+				.consentRecordLastUpdated(Instant.ofEpochMilli(11000L))
 				.consentManagerProviderId(8)
 				.consentManagerProviderVersion(9)
 				.addSpecialFeatureOptedIn(SpecialFeature.USE_PRECISE_GEOLOCATION_DATA);
@@ -51,8 +51,8 @@ public class TCModelEncoderTest {
 		assertEquals(7, coreString.getConsentScreen());
 		assertEquals(8, coreString.getCmpId());
 		assertEquals(9, coreString.getCmpVersion());
-		assertEquals(Instant.ofEpochMilli(10L), coreString.getCreated());
-		assertEquals(Instant.ofEpochMilli(11L), coreString.getLastUpdated());
+		assertEquals(Instant.ofEpochMilli(10000L), coreString.getCreated());
+		assertEquals(Instant.ofEpochMilli(11000L), coreString.getLastUpdated());
 		assertTrue(coreString.isPurposeOneTreatment());
 		assertTrue(coreString.isUseNonStandardStacks());
 		assertTrue(coreString.isServiceSpecific());

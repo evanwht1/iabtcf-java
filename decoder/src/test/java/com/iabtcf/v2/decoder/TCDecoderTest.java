@@ -23,7 +23,8 @@ class TCDecoderTest {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA.cAAAAAAAITg=";
         TCModel tc = TCModelDecoder.decode(tcString);
 
-        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandConsent();
+        assertTrue(tc.getOutOfBandConsent().isPresent());
+        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandConsent().get();
         assertNotNull(outOfBandSignals);
         assertTrue(outOfBandSignals.isVendorAllowed(12));
         assertTrue(outOfBandSignals.isVendorAllowed(23));
@@ -39,7 +40,8 @@ class TCDecoderTest {
         assertTrue(outOfBandSignals.isVendorDisclosed(65));
         assertTrue(outOfBandSignals.isVendorDisclosed(98));
         assertTrue(outOfBandSignals.isVendorDisclosed(129));
-        final PublisherTC publisherTC = tc.getPublisherTC();
+        assertTrue(tc.getPublisherTC().isPresent());
+        final PublisherTC publisherTC = tc.getPublisherTC().get();
         assertNotNull(publisherTC);
         assertTrue(publisherTC.isPurposeConsented(1));
         assertTrue(publisherTC.isPurposeLegitimateInterest(24));
@@ -53,7 +55,8 @@ class TCDecoderTest {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA";
         TCModel tc = TCModelDecoder.decode(tcString);
 
-        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandConsent();
+        assertTrue(tc.getOutOfBandConsent().isPresent());
+        final OutOfBandConsent outOfBandSignals = tc.getOutOfBandConsent().get();
         assertNotNull(outOfBandSignals);
         assertTrue(outOfBandSignals.isVendorAllowed(12));
         assertTrue(outOfBandSignals.isVendorAllowed(23));
@@ -125,7 +128,7 @@ class TCDecoderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"BObdrPUOevsguAfDqFENCNAAAAAmeAAA", "D"})
+    @ValueSource(strings = {"BObdrPUOevsguAfDqFENCNAAAAAmeAAA", "DGH"})
     void testBadString(String badString) {
         assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(badString));
     }
@@ -136,7 +139,7 @@ class TCDecoderTest {
         final String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA." + Util.base64FromBitString(publisherPurposes);
 
         final TCModel tc = TCModelDecoder.decode(base64CoreString);
-        assertEquals(PublisherTCImpl.EMPTY, tc.getPublisherTC());
+        assertTrue(tc.getPublisherTC().isEmpty());
     }
 
 }

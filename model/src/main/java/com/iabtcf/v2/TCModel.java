@@ -1,5 +1,7 @@
 package com.iabtcf.v2;
 
+import java.util.Optional;
+
 /**
  * @author evanwht1
  */
@@ -7,7 +9,7 @@ public interface TCModel {
 
     CoreString getCoreString();
 
-    OutOfBandConsent getOutOfBandConsent();
+    Optional<OutOfBandConsent> getOutOfBandConsent();
 
-    PublisherTC getPublisherTC();
+    Optional<PublisherTC> getPublisherTC();
 }

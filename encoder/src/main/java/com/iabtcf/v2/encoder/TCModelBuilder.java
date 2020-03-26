@@ -1,8 +1,6 @@
 package com.iabtcf.v2.encoder;
 
 import com.iabtcf.v2.CoreString;
-import com.iabtcf.v2.OutOfBandConsent;
-import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
 import com.iabtcf.v2.SpecialFeature;
@@ -73,19 +71,21 @@ public class TCModelBuilder {
 			RangeData rangeData = new RangeData();
 			pr.getAllVendors().forEach(rangeData::add);
 			publisherRestrictions.computeIfAbsent(pr.getPurpose(), p -> new EnumMap<>(RestrictionType.class))
-								 .put(pr.getRestrictionType(), rangeData);
+			                     .put(pr.getRestrictionType(), rangeData);
 
 		});
 
-		OutOfBandConsent outOfBandConsent = model.getOutOfBandConsent();
-		outOfBandConsent.getAllDisclosedVendors().forEach(disclosedVendors::add);
-		outOfBandConsent.getAllAllowedVendors().forEach(allowedVendors::add);
+		model.getOutOfBandConsent().ifPresent(oob -> {
+			oob.getAllDisclosedVendors().forEach(disclosedVendors::add);
+			oob.getAllAllowedVendors().forEach(allowedVendors::add);
+		});
 
-		PublisherTC purposesTC = model.getPublisherTC();
-		purposesTC.getAllConsentedPurposes().forEach(publisherPurposes::set);
-		purposesTC.getAllLegitimateInterestPurposes().forEach(publisherPurposesLI::set);
-		purposesTC.getAllConsentedCustomPurposes().forEach(publisherCustomPurposes::set);
-		purposesTC.getAllLegitimateInterestCustomPurposes().forEach(publisherCustomPurposesLI::set);
+		model.getPublisherTC().ifPresent(ptc -> {
+			ptc.getAllConsentedPurposes().forEach(publisherPurposes::set);
+			ptc.getAllLegitimateInterestPurposes().forEach(publisherPurposesLI::set);
+			ptc.getAllConsentedCustomPurposes().forEach(publisherCustomPurposes::set);
+			ptc.getAllLegitimateInterestCustomPurposes().forEach(publisherCustomPurposesLI::set);
+		});
 	}
 
 	public TCModelBuilder version(final int val) {
@@ -194,8 +194,8 @@ public class TCModelBuilder {
 	}
 
 	public TCModelBuilder addPublisherRestriction(final int vendor,
-												  final int purpose,
-												  final RestrictionType restrictionType) {
+	                                              final int purpose,
+	                                              final RestrictionType restrictionType) {
 		return addPublisherRestriction(vendor, Purpose.valueOf(purpose), restrictionType);
 	}
 
