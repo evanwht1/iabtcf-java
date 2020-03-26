@@ -51,7 +51,7 @@ class BitVectorGDPRTCModel implements TCModel {
 
     @Override
     public Optional<PublisherTC> getPublisherTC() {
-        if (publisherPurposes == null) {
+        if (publisherPurposes == null && publisherPurposesSupplier != null) {
             publisherPurposes = publisherPurposesSupplier.get();
         }
         return Optional.ofNullable(publisherPurposes);
@@ -90,7 +90,7 @@ class BitVectorGDPRTCModel implements TCModel {
         private Supplier<CoreString> coreString;
         private Supplier<BitSet> disclosedVendors = Constants.EMPTY_SUPPLIER;
         private Supplier<BitSet> allowedVendors = Constants.EMPTY_SUPPLIER;
-        private Supplier<PublisherTC> publisherPurposes = () -> null;
+        private Supplier<PublisherTC> publisherPurposes;
 
         private Builder() {}
 
