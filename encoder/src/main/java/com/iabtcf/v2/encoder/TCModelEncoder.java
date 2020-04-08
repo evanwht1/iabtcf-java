@@ -119,8 +119,8 @@ class TCModelEncoder {
 	}
 
 	private static final int MIN_RANGE_ENCODING_LENGTH =
-			Vendors.IS_A_RANGE.getLength() +
 			Vendors.NUM_ENTRIES.getLength() +
+			Vendors.IS_A_RANGE.getLength() +
 			Vendors.START_OR_ONLY_VENDOR_ID.getLength();
 
 	/**
@@ -132,8 +132,16 @@ class TCModelEncoder {
 	 * @param rangeData number of ids that need to be set
 	 * @return if the set would be better encoded as a bit field.
 	 */
-	private static boolean shouldRangeEncode(int maxId, RangeData rangeData) {
-		// TODO actually think of correct logic here (might need to keep a running flag as things are added to the set in the builder)
-		return maxId < MIN_RANGE_ENCODING_LENGTH || (maxId / rangeData.size()) < 10;
+	static boolean shouldRangeEncode(int maxId, RangeData rangeData) {
+		if (maxId <= MIN_RANGE_ENCODING_LENGTH) {
+			return false;
+		}
+		final int rangeSize = rangeData.getRanges()
+		                               .stream()
+		                               .mapToInt(r -> Vendors.IS_A_RANGE.getLength() +
+		                                              Vendors.START_OR_ONLY_VENDOR_ID.getLength() +
+		                                              (r.isARange() ? Vendors.END_VENDOR_ID.getLength() : 0))
+		                               .sum();
+		return  maxId > (Vendors.NUM_ENTRIES.getLength() + rangeSize);
 	}
 }

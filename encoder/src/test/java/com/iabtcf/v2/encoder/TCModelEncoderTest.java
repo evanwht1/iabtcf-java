@@ -1,6 +1,7 @@
 package com.iabtcf.v2.encoder;
 
 import com.iabtcf.v2.CoreString;
+import com.iabtcf.v2.Field;
 import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
 import com.iabtcf.v2.SpecialFeature;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -68,5 +70,22 @@ public class TCModelEncoderTest {
 		assertEquals(1, coreString.getAllConsentedVendors().count());
 		assertTrue(coreString.isVendorLegitimateInterest(4));
 		assertEquals(1, coreString.getAllLegitimateInterestVendors().count());
+	}
+
+	@Test
+	void testShouldRangeEncode() {
+		int maxId = Field.Vendors.NUM_ENTRIES.getLength() +
+		            Field.Vendors.IS_A_RANGE.getLength() +
+		            Field.Vendors.START_OR_ONLY_VENDOR_ID.getLength();
+		assertFalse(TCModelEncoder.shouldRangeEncode(maxId, null));
+
+		RangeData rangeData = new RangeData();
+		rangeData.add(1, 3, 5, 7, 96);
+		// 12 + (17 * 5) = 97
+		assertFalse(TCModelEncoder.shouldRangeEncode(rangeData.getMaxId(), rangeData));
+
+		rangeData.add(115);
+		// 12 + (17 * 6) = 114
+		assertTrue(TCModelEncoder.shouldRangeEncode(rangeData.getMaxId(), rangeData));
 	}
 }
