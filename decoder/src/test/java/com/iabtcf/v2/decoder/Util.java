@@ -10,8 +10,6 @@ import java.util.List;
  */
 public class Util {
 
-	private static final Base64.Decoder DECODER = Base64.getUrlDecoder();
-
 	static String base64FromBitString(String str) {
 		List<Byte> byteList = new ArrayList<>();
 		for (int i = 0; i < str.length(); ) {
@@ -35,12 +33,10 @@ public class Util {
 	}
 
 	static BitInputStream vectorFromBase64String(final String str) {
-		byte[] bytes = DECODER.decode(str);
-		return BitInputStream.from(bytes);
+		return BitInputStream.fromBase64String(str);
 	}
 
 	static BitInputStream vectorFromBitString(final String str) {
-		byte[] bytes = DECODER.decode(base64FromBitString(str));
-		return BitInputStream.from(bytes);
+		return BitInputStream.fromBase64String(base64FromBitString(str));
 	}
 }

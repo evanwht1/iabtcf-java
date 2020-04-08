@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.UnsupportedEncodingException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TCDecoderTest {
 
     @Test
-    void testDecodeAllSegments() {
+    void testDecodeAllSegments() throws UnsupportedEncodingException {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA.cAAAAAAAITg=";
         TCModel tc = TCModelDecoder.decode(tcString);
 
@@ -51,7 +53,7 @@ class TCDecoderTest {
     }
 
     @Test
-    void testParseWithOOBSignals() {
+    void testParseWithOOBSignals() throws UnsupportedEncodingException {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA";
         TCModel tc = TCModelDecoder.decode(tcString);
 
@@ -75,7 +77,7 @@ class TCDecoderTest {
     }
 
     @Test
-    void testPublisherRestrictions() {
+    void testPublisherRestrictions() throws UnsupportedEncodingException {
         String bitString =
                 "0000100011101011100"
                 + "1000000000000001010"
@@ -123,18 +125,18 @@ class TCDecoderTest {
             "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IFoEUQQgAIQwgIwQABAEAAAAOIAACAIAAAAQAIAgEAACEAAAAAgAQBAAAAAAAGBAAgAAAAAAAFAAECAAAgAAQARAEQAAAAAJAAIAAgAAAYQEAAAQmAgBC3ZAYzUw",
             "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA"
     })
-    void testVanillaDecode(String tcString) {
+    void testVanillaDecode(String tcString) throws UnsupportedEncodingException {
         assertNotNull(TCModelDecoder.decode(tcString));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"BObdrPUOevsguAfDqFENCNAAAAAmeAAA", "DGH"})
     void testBadString(String badString) {
-        assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(badString));
+        assertThrows(UnsupportedEncodingException.class, () -> TCModelDecoder.decode(badString));
     }
 
     @Test
-    void testDefaultSegmentType() {
+    void testDefaultSegmentType() throws UnsupportedEncodingException {
         final String publisherPurposes = "00000000"; // segment type
         final String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA." + Util.base64FromBitString(publisherPurposes);
 

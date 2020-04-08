@@ -3,6 +3,7 @@ package com.iabtcf.v2.decoder;
 import com.iabtcf.v2.Field;
 
 import java.time.Instant;
+import java.util.Base64;
 import java.util.BitSet;
 
 /**
@@ -16,6 +17,10 @@ class BitInputStream {
 
     private BitInputStream(byte[] bytes) {
         this.data = bytes;
+    }
+
+    static BitInputStream fromBase64String(final String str) {
+        return BitInputStream.from(Base64.getUrlDecoder().decode(str));
     }
 
     static BitInputStream from(byte[] bytes) {

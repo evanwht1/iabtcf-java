@@ -23,7 +23,7 @@ class PublisherTCDecoder {
 	 *          will have already read the {@link Field.PublisherTC#SEGMENT_TYPE} and therefor the bit vector should be at the
 	 *          4th bit before calling this. Unit tests should mimic this behavior accordingly.
 	 *
-	 * @param bitInputStream bitvector to read from
+	 * @param bitInputStream bit input stream to read from
 	 * @return PublisherTC fields contained in the bit vector
 	 */
 	static PublisherTC decode(BitInputStream bitInputStream) {

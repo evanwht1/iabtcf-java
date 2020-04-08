@@ -29,9 +29,9 @@ class CoreStringEncoder {
 		bs.write(CoreString.TCF_POLICY_VERSION, coreString.getPolicyVersion());
 		bs.write(coreString.isServiceSpecific());
 		bs.write(coreString.isUseNonStandardStacks());
-		BitOutputStreamUtil.write(bs, CoreString.SPECIAL_FEATURE_OPT_INS, coreString::isSpecialFeatureOptedIn);
-		BitOutputStreamUtil.write(bs, CoreString.PURPOSES_CONSENT, coreString::isPurposeConsented);
-		BitOutputStreamUtil.write(bs, CoreString.PURPOSE_LI_TRANSPARENCY, coreString::isPurposeLegitimateInterest);
+		bs.write(CoreString.SPECIAL_FEATURE_OPT_INS, coreString::isSpecialFeatureOptedIn);
+		bs.write(CoreString.PURPOSES_CONSENT, coreString::isPurposeConsented);
+		bs.write(CoreString.PURPOSE_LI_TRANSPARENCY, coreString::isPurposeLegitimateInterest);
 		bs.write(coreString.isPurposeOneTreatment());
 		bs.write(CoreString.PUBLISHER_CC, coreString.getPublisherCountryCode());
 		writeRange(bs, coreString.getAllConsentedVendors());

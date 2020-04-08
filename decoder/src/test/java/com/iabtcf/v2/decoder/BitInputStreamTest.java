@@ -78,12 +78,7 @@ class BitInputStreamTest {
         byte[] bytes = new byte[(int) Math.ceil(spaceTrimmed.length() / 8.0)];
         int j = 0;
         for (int i = 0; i < spaceTrimmed.length(); i += 8) {
-            int endIndex;
-            if (i + 8 < spaceTrimmed.length()) {
-                endIndex = i + 8;
-            } else {
-                endIndex = spaceTrimmed.length();
-            }
+            int endIndex = Math.min(i + 8, spaceTrimmed.length());
             String sub = spaceTrimmed.substring(i, endIndex);
             sub = sub.length() == 8
                     ? sub

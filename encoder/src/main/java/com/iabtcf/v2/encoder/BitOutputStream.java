@@ -61,6 +61,16 @@ class BitOutputStream {
 		}
 	}
 
+	void write(Field field, ValueChecker checker) {
+		write(field.getLength(), checker);
+	}
+
+	void write(int length, ValueChecker checker) {
+		for (int i = 1; i <= length; i++) {
+			write(checker.isSet(i));
+		}
+	}
+
 	void write(Field field, boolean set) {
 		assert field.getLength() == 1;
 		writeBit(set);

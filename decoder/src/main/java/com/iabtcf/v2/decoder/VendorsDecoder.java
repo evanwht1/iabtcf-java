@@ -16,7 +16,7 @@ import static com.iabtcf.v2.Field.Vendors.START_OR_ONLY_VENDOR_ID;
  * @author SleimanJneidi
  * @author evanwht1
  */
-final class VendorsDecoder {
+class VendorsDecoder {
 
 	/**
 	 * Reads the Vendors fields from a TCF segment string. This can either be the entire OOB Disclosed Vendors or
@@ -28,7 +28,7 @@ final class VendorsDecoder {
 	 *          to {@link Field.CoreString#PUBLISHER_CC}, therefor the bit vector should be at the correct position
 	 *          before calling this. Unit tests should mimic this behavior accordingly.
 	 *
-	 * @param bitInputStream bit vector to read data from
+	 * @param bitInputStream bit input stream to read data from
 	 * @return the new position that was read to
 	 */
 	static BitSet decode(BitInputStream bitInputStream) {
