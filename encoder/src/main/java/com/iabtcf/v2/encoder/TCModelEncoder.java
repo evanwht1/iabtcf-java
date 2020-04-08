@@ -22,10 +22,8 @@ class TCModelEncoder {
 		if (!outOfBandBuilder.allowedVendors.isEmpty()) {
 			sj.add(VendorEncoder.writeVendorString(SegmentType.ALLOWED_VENDOR, outOfBandBuilder.disclosedVendors));
 		}
-		final PublisherTCBuilder publisherTCBuilder = builder.getPublisherTCBuilder();
-		if (!publisherTCBuilder.publisherPurposes.isEmpty() || !publisherTCBuilder.publisherPurposesLI.isEmpty()
-				|| ! publisherTCBuilder.publisherCustomPurposes.isEmpty() || !publisherTCBuilder.publisherCustomPurposesLI.isEmpty()) {
-			sj.add(PublisherTCEncoder.writePublisherTCString(builder.getPublisherTCBuilder()));
+		if (builder.hasPublisherTCFields()) {
+			sj.add(PublisherTCEncoder.encode(builder.getPublisherTCBuilder().build()));
 		}
 
 		return sj.toString();

@@ -246,25 +246,25 @@ public interface CoreString {
 
 	class Builder {
 
-		int version;
-		Instant created;
-		Instant lastUpdated;
-		int cmpId;
-		int cmpVersion;
-		int consentScreen;
-		String consentLanguage;
-		int vendorListVersion;
-		int policyVersion;
-		boolean isServiceSpecific;
-		boolean useNonStandardStacks;
-		boolean isPurposeOneTreatment;
-		String publisherCountryCode;
-		BitSet specialFeaturesOptInts = new BitSet();
-		BitSet purposesConsent = new BitSet();
-		BitSet purposesLITransparency = new BitSet();
-		BitSet vendorConsents = new BitSet();
-		BitSet vendorLegitimateInterests = new BitSet();
-		Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions = new HashMap<>();
+		private int version;
+		private Instant created;
+		private Instant lastUpdated;
+		private int cmpId;
+		private int cmpVersion;
+		private int consentScreen;
+		private String consentLanguage;
+		private int vendorListVersion;
+		private int policyVersion;
+		private boolean isServiceSpecific;
+		private boolean useNonStandardStacks;
+		private boolean isPurposeOneTreatment;
+		private String publisherCountryCode;
+		private BitSet specialFeaturesOptInts = new BitSet();
+		private BitSet purposesConsent = new BitSet();
+		private BitSet purposesLITransparency = new BitSet();
+		private BitSet vendorConsents = new BitSet();
+		private BitSet vendorLegitimateInterests = new BitSet();
+		private Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions = new HashMap<>();
 
 		Builder() {}
 

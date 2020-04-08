@@ -1,6 +1,7 @@
 package com.iabtcf.v2.encoder;
 
 import com.iabtcf.v2.CoreString;
+import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.TCModel;
 
 /**
@@ -8,27 +9,22 @@ import com.iabtcf.v2.TCModel;
  */
 public class TCModelBuilder {
 
-	CoreString.Builder coreStringBuilder;
-	OutOfBandBuilder outOfBandBuilder;
-	PublisherTCBuilder publisherTCBuilder;
+	private CoreString.Builder coreStringBuilder;
+	private OutOfBandBuilder outOfBandBuilder;
+	private PublisherTC.Builder publisherTCBuilder;
 
 	public TCModelBuilder() {
 		coreStringBuilder = CoreString.newBuilder();
 		outOfBandBuilder = new OutOfBandBuilder();
-		publisherTCBuilder = new PublisherTCBuilder();
 	}
 
 	public TCModelBuilder(TCModel model) {
 		coreStringBuilder = CoreString.newBuilder(model.getCoreString());
 		if (model.getOutOfBandConsent().isPresent()) {
 			outOfBandBuilder = new OutOfBandBuilder(model.getOutOfBandConsent().get());
-		} else {
-			outOfBandBuilder = new OutOfBandBuilder();
 		}
 		if (model.getPublisherTC().isPresent()) {
-			publisherTCBuilder = new PublisherTCBuilder(model.getPublisherTC().get());
-		} else {
-			publisherTCBuilder = new PublisherTCBuilder();
+			publisherTCBuilder = PublisherTC.newBuilder(model.getPublisherTC().get());
 		}
 	}
 
@@ -37,11 +33,21 @@ public class TCModelBuilder {
 	}
 
 	public OutOfBandBuilder getOutOfBandBuilder() {
+		if (outOfBandBuilder == null) {
+			outOfBandBuilder = new OutOfBandBuilder();
+		}
 		return outOfBandBuilder;
 	}
 
-	public PublisherTCBuilder getPublisherTCBuilder() {
+	public PublisherTC.Builder getPublisherTCBuilder() {
+		if (publisherTCBuilder == null) {
+			publisherTCBuilder = PublisherTC.newBuilder();
+		}
 		return publisherTCBuilder;
+	}
+
+	boolean hasPublisherTCFields() {
+		return publisherTCBuilder != null;
 	}
 
 	public String buildTCString() {

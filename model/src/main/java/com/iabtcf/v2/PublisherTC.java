@@ -1,5 +1,7 @@
 package com.iabtcf.v2;
 
+import java.util.BitSet;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
@@ -73,4 +75,158 @@ public interface PublisherTC {
 	 * @return all custom purpose's that have met their transparency requirement
 	 */
 	IntStream getAllLegitimateInterestCustomPurposes();
+
+	static Builder newBuilder() {
+		return new Builder();
+	}
+
+	static Builder newBuilder(PublisherTC publisherTC) {
+		return new Builder(publisherTC);
+	}
+
+	class Builder {
+
+		private BitSet purposesConsent = new BitSet();
+		private BitSet purposesLegitimateInterest = new BitSet();
+		private BitSet customPurposesConsent = new BitSet();
+		private BitSet customPurposesLegitimateInterest = new BitSet();
+
+		Builder() {}
+
+		Builder(PublisherTC publisherTC) {
+			publisherTC.getAllConsentedPurposes().forEach(purposesConsent::set);
+			publisherTC.getAllLegitimateInterestPurposes().forEach(purposesLegitimateInterest::set);
+			publisherTC.getAllConsentedCustomPurposes().forEach(customPurposesConsent::set);
+			publisherTC.getAllLegitimateInterestCustomPurposes().forEach(customPurposesLegitimateInterest::set);
+		}
+
+		public Builder addPurposeConsent(final int purpose) {
+			purposesConsent.set(purpose);
+			return this;
+		}
+
+		public Builder purposeConsents(final BitSet set) {
+			purposesConsent = set;
+			return this;
+		}
+
+		public Builder addPurposeLegitimateInterest(final int purpose) {
+			purposesLegitimateInterest.set(purpose);
+			return this;
+		}
+
+		public Builder purposeLegitimateInterest(final BitSet set) {
+			purposesLegitimateInterest = set;
+			return this;
+		}
+
+		public Builder addCustomPurposeConsent(final int purpose) {
+			customPurposesConsent.set(purpose);
+			return this;
+		}
+
+		public Builder customPurposeConsents(final BitSet set) {
+			customPurposesConsent = set;
+			return this;
+		}
+
+		public Builder addCustomPurposeLegitimateInterest(final int purpose) {
+			customPurposesLegitimateInterest.set(purpose);
+			return this;
+		}
+
+		public Builder customPurposeLegitimateInterest(final BitSet set) {
+			customPurposesLegitimateInterest = set;
+			return this;
+		}
+
+		public PublisherTC build() {
+			return new PublisherTCImpl(this);
+		}
+
+		private static final class PublisherTCImpl implements PublisherTC {
+
+			private final BitSet purposesConsent;
+			private final BitSet purposesLegitimateInterest;
+			private final BitSet customPurposesConsent;
+			private final BitSet customPurposesLegitimateInterest;
+
+			PublisherTCImpl(final Builder b) {
+				this.purposesConsent = b.purposesConsent;
+				this.purposesLegitimateInterest = b.purposesLegitimateInterest;
+				this.customPurposesConsent = b.customPurposesConsent;
+				this.customPurposesLegitimateInterest = b.customPurposesLegitimateInterest;
+			}
+
+			@Override
+			public boolean isPurposeConsented(final int purpose) {
+				return purposesConsent.get(purpose);
+			}
+
+			@Override
+			public IntStream getAllConsentedPurposes() {
+				return purposesConsent.stream();
+			}
+
+			@Override
+			public boolean isPurposeLegitimateInterest(final int purpose) {
+				return purposesLegitimateInterest.get(purpose);
+			}
+
+			@Override
+			public IntStream getAllLegitimateInterestPurposes() {
+				return purposesLegitimateInterest.stream();
+			}
+
+			@Override
+			public boolean isCustomPurposeConsented(final int customPurpose) {
+				return customPurposesConsent.get(customPurpose);
+			}
+
+			@Override
+			public IntStream getAllConsentedCustomPurposes() {
+				return customPurposesConsent.stream();
+			}
+
+			@Override
+			public boolean isCustomPurposeLegitimateInterest(final int customPurpose) {
+				return customPurposesLegitimateInterest.get(customPurpose);
+			}
+
+			@Override
+			public IntStream getAllLegitimateInterestCustomPurposes() {
+				return customPurposesLegitimateInterest.stream();
+			}
+
+			@Override
+			public boolean equals(final Object o) {
+				if (this == o) {
+					return true;
+				}
+				if (o == null || getClass() != o.getClass()) {
+					return false;
+				}
+				final PublisherTCImpl that = (PublisherTCImpl) o;
+				return Objects.equals(purposesConsent, that.purposesConsent) &&
+				       Objects.equals(purposesLegitimateInterest, that.purposesLegitimateInterest) &&
+				       Objects.equals(customPurposesConsent, that.customPurposesConsent) &&
+				       Objects.equals(customPurposesLegitimateInterest, that.customPurposesLegitimateInterest);
+			}
+
+			@Override
+			public int hashCode() {
+				return Objects.hash(purposesConsent, purposesLegitimateInterest, customPurposesConsent, customPurposesLegitimateInterest);
+			}
+
+			@Override
+			public String toString() {
+				return "PublisherTCImpl{" +
+				       "publisherPurposesConsent: " + purposesConsent +
+				       ", publisherPurposesLITransparency: " + purposesLegitimateInterest +
+				       ", customPurposesConsent: " + customPurposesConsent +
+				       ", customPurposesLITransparency: " + customPurposesLegitimateInterest +
+				       '}';
+			}
+		}
+	}
 }

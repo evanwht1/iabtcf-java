@@ -85,6 +85,6 @@ class BitOutputStream {
 	}
 
 	private int bytesForBits(int bits) {
-		return (bits / Byte.SIZE) + ((bits % Byte.SIZE) > 1 ? 1 : 0);
+		return (bits / Byte.SIZE) + ((bits % Byte.SIZE) >= 1 ? 1 : 0);
 	}
 }

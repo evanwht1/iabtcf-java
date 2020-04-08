@@ -1,6 +1,7 @@
 package com.iabtcf.v2.decoder;
 
 import com.iabtcf.v2.Field;
+import com.iabtcf.v2.PublisherTC;
 
 import java.util.BitSet;
 
@@ -25,7 +26,7 @@ class PublisherTCDecoder {
 	 * @param bitInputStream bitvector to read from
 	 * @return PublisherTC fields contained in the bit vector
 	 */
-	static PublisherTCImpl decode(BitInputStream bitInputStream) {
+	static PublisherTC decode(BitInputStream bitInputStream) {
 		final BitSet consents = bitInputStream.readBitSet(PUB_PURPOSE_CONSENT.getLength());
 		final BitSet liTransparency = bitInputStream.readBitSet(PUB_PURPOSES_LI_TRANSPARENCY.getLength());
 
@@ -33,6 +34,11 @@ class PublisherTCDecoder {
 		final BitSet customPurposes = bitInputStream.readBitSet(numberOfCustomPurposes);
 		final BitSet customLiTransparency = bitInputStream.readBitSet(numberOfCustomPurposes);
 
-		return new PublisherTCImpl(consents, liTransparency, customPurposes, customLiTransparency);
+		return PublisherTC.newBuilder()
+		                  .purposeConsents(consents)
+		                  .purposeLegitimateInterest(liTransparency)
+		                  .customPurposeConsents(customPurposes)
+		                  .customPurposeLegitimateInterest(customLiTransparency)
+		                  .build();
 	}
 }
