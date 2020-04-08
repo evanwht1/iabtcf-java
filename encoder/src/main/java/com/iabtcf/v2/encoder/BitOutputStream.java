@@ -67,7 +67,7 @@ class BitOutputStream {
 
 	void write(int length, ValueChecker checker) {
 		for (int i = 1; i <= length; i++) {
-			write(checker.isSet(i));
+			write(checker.check(i));
 		}
 	}
 
@@ -95,6 +95,6 @@ class BitOutputStream {
 	}
 
 	private int bytesForBits(int bits) {
-		return (bits / Byte.SIZE) + ((bits % Byte.SIZE) >= 1 ? 1 : 0);
+		return (bits / Byte.SIZE) + ((bits % Byte.SIZE) > 0 ? 1 : 0);
 	}
 }

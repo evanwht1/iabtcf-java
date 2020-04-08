@@ -16,7 +16,7 @@ class TCModelEncoder {
 		final StringJoiner sj = new StringJoiner(".")
 				.add(CoreStringEncoder.encode(builder.getCoreStringBuilder().build()));
 
-		if (builder.hasOutOfBandConsentField()) {
+		if (builder.hasOutOfBandConsentFields()) {
 			final OutOfBandConsent outOfBandBuilder = builder.getOutOfBandBuilder().build();
 			if (outOfBandBuilder.getAllDisclosedVendors().count() > 0) {
 				sj.add(VendorEncoder.encode(SegmentType.DISCLOSED_VENDOR, RangeData.from(outOfBandBuilder.getAllDisclosedVendors())));

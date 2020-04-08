@@ -6,5 +6,5 @@ package com.iabtcf.v2.encoder;
 @FunctionalInterface
 public interface ValueChecker {
 
-	boolean isSet(int value);
+	boolean check(int value);
 }

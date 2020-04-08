@@ -21,7 +21,7 @@ class CoreStringDecoderTest {
 	@Test
 	void testParse() {
 		String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA";
-		final BitInputStream bitInputStream = Util.vectorFromBase64String(base64CoreString);
+		final BitInputStream bitInputStream = BitInputStream.fromBase64String(base64CoreString);
 		CoreString coreString = CoreStringDecoder.decode(bitInputStream.readInt(VERSION), bitInputStream);
 
 		assertEquals(2, coreString.getVersion());

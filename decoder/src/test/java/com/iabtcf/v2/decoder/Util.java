@@ -31,12 +31,4 @@ public class Util {
 		}
 		return Base64.getUrlEncoder().encodeToString(bytes);
 	}
-
-	static BitInputStream vectorFromBase64String(final String str) {
-		return BitInputStream.fromBase64String(str);
-	}
-
-	static BitInputStream vectorFromBitString(final String str) {
-		return BitInputStream.fromBase64String(base64FromBitString(str));
-	}
 }

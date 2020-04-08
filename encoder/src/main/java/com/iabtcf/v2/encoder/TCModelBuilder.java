@@ -16,7 +16,6 @@ public class TCModelBuilder {
 
 	public TCModelBuilder() {
 		coreStringBuilder = CoreString.newBuilder();
-		outOfBandBuilder = OutOfBandConsent.newBuilder();
 	}
 
 	public TCModelBuilder(TCModel model) {
@@ -40,7 +39,7 @@ public class TCModelBuilder {
 		return outOfBandBuilder;
 	}
 
-	boolean hasOutOfBandConsentField() {
+	boolean hasOutOfBandConsentFields() {
 		return outOfBandBuilder != null;
 	}
 
