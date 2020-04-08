@@ -125,7 +125,8 @@ class TCDecoderTest {
             "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA"
     })
     void testVanillaDecode(String tcString) throws UnsupportedVersionException {
-        assertNotNull(TCModelDecoder.decode(tcString));
+        assertNotNull(TCModelDecoder.decode(tcString, true));
+        assertNotNull(TCModelDecoder.decode(tcString, false));
     }
 
     @ParameterizedTest

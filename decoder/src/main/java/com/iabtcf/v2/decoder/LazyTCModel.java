@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * @author SleimanJneidi
  * @author evanwht1
  */
-class TCModelImpl implements TCModel {
+class LazyTCModel implements TCModel {
 
     private final Supplier<CoreString> coreStringSupplier;
     private CoreString coreString;
@@ -25,9 +25,9 @@ class TCModelImpl implements TCModel {
     private final Supplier<PublisherTC> publisherTCSupplier;
     private PublisherTC publisherTC;
 
-    private TCModelImpl(final Builder b) {
+    private LazyTCModel(final Builder b, final boolean lazy) {
         coreStringSupplier = b.coreString;
-        if (b.disclosedVendors != Constants.EMPTY_SUPPLIER || b.allowedVendors != Constants.EMPTY_SUPPLIER) {
+        if (b.disclosedVendors != EmptyConstants.EMPTY_SUPPLIER || b.allowedVendors != EmptyConstants.EMPTY_SUPPLIER) {
             outOfBandConsentSupplier = () -> OutOfBandConsent.newBuilder()
                                                              .disclosedVendors(b.disclosedVendors.get())
                                                              .allowedVendors(b.allowedVendors.get())
@@ -36,6 +36,12 @@ class TCModelImpl implements TCModel {
             outOfBandConsentSupplier = null;
         }
         publisherTCSupplier = b.publisherPurposes;
+
+        if (!lazy) {
+            getCoreString();
+            getOutOfBandConsent();
+            getPublisherTC();
+        }
     }
 
     static Builder newBuilder() {
@@ -74,7 +80,7 @@ class TCModelImpl implements TCModel {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final TCModelImpl that = (TCModelImpl) o;
+        final LazyTCModel that = (LazyTCModel) o;
         return getCoreString().equals(that.getCoreString()) &&
                getOutOfBandConsent().equals(that.getOutOfBandConsent()) &&
                Objects.equals(getPublisherTC(), that.getPublisherTC());
@@ -97,8 +103,8 @@ class TCModelImpl implements TCModel {
     static final class Builder {
 
         private Supplier<CoreString> coreString;
-        private Supplier<BitSet> disclosedVendors = Constants.EMPTY_SUPPLIER;
-        private Supplier<BitSet> allowedVendors = Constants.EMPTY_SUPPLIER;
+        private Supplier<BitSet> disclosedVendors = EmptyConstants.EMPTY_SUPPLIER;
+        private Supplier<BitSet> allowedVendors = EmptyConstants.EMPTY_SUPPLIER;
         private Supplier<PublisherTC> publisherPurposes;
 
         private Builder() {}
@@ -123,8 +129,8 @@ class TCModelImpl implements TCModel {
             return this;
         }
 
-        TCModel build() {
-            return new TCModelImpl(this);
+        TCModel build(boolean lazy) {
+            return new LazyTCModel(this, lazy);
         }
     }
 }

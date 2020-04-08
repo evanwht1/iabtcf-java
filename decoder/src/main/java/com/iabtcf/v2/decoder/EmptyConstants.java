@@ -6,9 +6,9 @@ import java.util.function.Supplier;
 /**
  * @author evanwht1@gmail.com
  */
-class Constants {
+class EmptyConstants {
 
-	private Constants() { }
+	private EmptyConstants() { }
 
 	static final BitSet EMPTY_BIT_SET = new BitSet();
 

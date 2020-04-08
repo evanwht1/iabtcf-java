@@ -80,20 +80,29 @@ public interface PublisherTC {
 		return new Builder();
 	}
 
-	static Builder newBuilder(PublisherTC publisherTC) {
+	static Builder newBuilder(final PublisherTC publisherTC) {
 		return new Builder(publisherTC);
 	}
 
 	class Builder {
 
-		private BitSet purposesConsent = new BitSet();
-		private BitSet purposesLegitimateInterest = new BitSet();
-		private BitSet customPurposesConsent = new BitSet();
-		private BitSet customPurposesLegitimateInterest = new BitSet();
+		private BitSet purposesConsent;
+		private BitSet purposesLegitimateInterest;
+		private BitSet customPurposesConsent;
+		private BitSet customPurposesLegitimateInterest;
 
-		Builder() {}
+		private Builder() {
+			purposesConsent = EmptyConstants.BIT_SET;
+			purposesLegitimateInterest = EmptyConstants.BIT_SET;
+			customPurposesConsent = EmptyConstants.BIT_SET;
+			customPurposesLegitimateInterest = EmptyConstants.BIT_SET;
+		}
 
-		Builder(PublisherTC publisherTC) {
+		private Builder(final PublisherTC publisherTC) {
+			purposesConsent = new BitSet();
+			purposesLegitimateInterest = new BitSet();
+			customPurposesConsent = new BitSet();
+			customPurposesLegitimateInterest = new BitSet();
 			publisherTC.getAllConsentedPurposes().forEach(purposesConsent::set);
 			publisherTC.getAllLegitimateInterestPurposes().forEach(purposesLegitimateInterest::set);
 			publisherTC.getAllConsentedCustomPurposes().forEach(customPurposesConsent::set);
@@ -101,42 +110,54 @@ public interface PublisherTC {
 		}
 
 		public Builder addPurposeConsent(final int purpose) {
+			if (purposesConsent == EmptyConstants.BIT_SET) {
+				purposesConsent = new BitSet();
+			}
 			purposesConsent.set(purpose);
 			return this;
 		}
 
 		public Builder purposeConsents(final BitSet set) {
-			purposesConsent = set;
+			purposesConsent = set == null ? EmptyConstants.BIT_SET : set;
 			return this;
 		}
 
 		public Builder addPurposeLegitimateInterest(final int purpose) {
+			if (purposesLegitimateInterest == EmptyConstants.BIT_SET) {
+				purposesLegitimateInterest = new BitSet();
+			}
 			purposesLegitimateInterest.set(purpose);
 			return this;
 		}
 
 		public Builder purposeLegitimateInterest(final BitSet set) {
-			purposesLegitimateInterest = set;
+			purposesLegitimateInterest = set == null ? EmptyConstants.BIT_SET : set;
 			return this;
 		}
 
 		public Builder addCustomPurposeConsent(final int purpose) {
+			if (customPurposesConsent == EmptyConstants.BIT_SET) {
+				customPurposesConsent = new BitSet();
+			}
 			customPurposesConsent.set(purpose);
 			return this;
 		}
 
 		public Builder customPurposeConsents(final BitSet set) {
-			customPurposesConsent = set;
+			customPurposesConsent = set == null ? EmptyConstants.BIT_SET : set;
 			return this;
 		}
 
 		public Builder addCustomPurposeLegitimateInterest(final int purpose) {
+			if (customPurposesLegitimateInterest == EmptyConstants.BIT_SET) {
+				customPurposesLegitimateInterest = new BitSet();
+			}
 			customPurposesLegitimateInterest.set(purpose);
 			return this;
 		}
 
 		public Builder customPurposeLegitimateInterest(final BitSet set) {
-			customPurposesLegitimateInterest = set;
+			customPurposesLegitimateInterest = set == null ? EmptyConstants.BIT_SET : set;
 			return this;
 		}
 

@@ -25,40 +25,41 @@ public class TCModelEncoderTest {
 
 	@Test
 	void testEncodeFullString() throws UnsupportedVersionException {
-		final TCModelBuilder builder = new TCModelBuilder();
+		final TCModel.Builder builder = TCModel.newBuilder();
 
-		builder.getCoreStringBuilder()
-		       .consentLanguage("en")
-		       .addPurposeConsent(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE)
-		       .addPurposesLegitimateInterest(Purpose.SELECT_BASIC_ADS)
-		       .addVendorConsent(3)
-		       .addVendorLegitimateInterest(4)
-		       .addPublisherRestriction(5, Purpose.CREATE_PERSONALISED_ADS_PROFILE, RestrictionType.NOT_ALLOWED)
-		       .version(2)
-		       .policyVersion(5)
-		       .vendorListVersion(6)
-		       .isServiceSpecific(true)
-		       .useNonStandardStacks(true)
-		       .isPurposeOneTreatment(true)
-		       .publisherCountryCode("US")
-		       .consentScreen(7)
-		       .consentRecordCreated(Instant.ofEpochMilli(10000L))
-		       .consentRecordLastUpdated(Instant.ofEpochMilli(11000L))
-		       .consentManagerProviderId(8)
-		       .consentManagerProviderVersion(9)
-		       .addSpecialFeatureOptedIn(SpecialFeature.USE_PRECISE_GEOLOCATION_DATA);
+		builder.coreString(CoreString.newBuilder()
+		                             .consentLanguage("en")
+		                             .addPurposeConsent(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE)
+		                             .addPurposesLegitimateInterest(Purpose.SELECT_BASIC_ADS)
+		                             .addVendorConsent(3)
+		                             .addVendorLegitimateInterest(4)
+		                             .addPublisherRestriction(5, Purpose.CREATE_PERSONALISED_ADS_PROFILE, RestrictionType.NOT_ALLOWED)
+		                             .version(2)
+		                             .policyVersion(5)
+		                             .vendorListVersion(6)
+		                             .isServiceSpecific(true)
+		                             .useNonStandardStacks(true)
+		                             .isPurposeOneTreatment(true)
+		                             .publisherCountryCode("US")
+		                             .consentScreen(7)
+		                             .consentRecordCreated(Instant.ofEpochMilli(10000L))
+		                             .consentRecordLastUpdated(Instant.ofEpochMilli(11000L))
+		                             .consentManagerProviderId(8)
+		                             .consentManagerProviderVersion(9)
+		                             .addSpecialFeatureOptedIn(SpecialFeature.USE_PRECISE_GEOLOCATION_DATA)
+		                             .build())
+		       .outOfBandConsent(OutOfBandConsent.newBuilder()
+		                                         .addAllowedVendor(10)
+		                                         .addDisclosedVendor(11)
+		                                         .build())
+		       .publisherTC(PublisherTC.newBuilder()
+		                               .addPurposeConsent(12)
+		                               .addPurposeLegitimateInterest(13)
+		                               .addCustomPurposeConsent(14)
+		                               .addCustomPurposeLegitimateInterest(15)
+		                               .build());
 
-		builder.getOutOfBandBuilder()
-		       .addAllowedVendor(10)
-		       .addDisclosedVendor(11);
-
-		builder.getPublisherTCBuilder()
-		       .addPurposeConsent(12)
-		       .addPurposeLegitimateInterest(13)
-		       .addCustomPurposeConsent(14)
-		       .addCustomPurposeLegitimateInterest(15);
-
-		final String tcString = builder.buildTCString();
+		final String tcString = TCModelEncoder.encode(builder.build());
 		final TCModel decode = TCModelDecoder.decode(tcString);
 
 		final CoreString coreString = decode.getCoreString();

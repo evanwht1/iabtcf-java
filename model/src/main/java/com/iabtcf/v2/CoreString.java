@@ -240,7 +240,7 @@ public interface CoreString {
 		return new Builder();
 	}
 
-	static Builder newBuilder(CoreString coreString) {
+	static Builder newBuilder(final CoreString coreString) {
 		return new Builder(coreString);
 	}
 
@@ -266,9 +266,9 @@ public interface CoreString {
 		private BitSet vendorLegitimateInterests = new BitSet();
 		private Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions = new HashMap<>();
 
-		Builder() {}
+		private Builder() {}
 
-		Builder(CoreString coreString) {
+		private Builder(final CoreString coreString) {
 			version = coreString.getVersion();
 			created = coreString.getCreated();
 			lastUpdated = coreString.getLastUpdated();

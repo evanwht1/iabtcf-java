@@ -1,8 +1,8 @@
 package com.iabtcf.v2.encoder;
 
 import com.iabtcf.v2.Field.Vendors;
-import com.iabtcf.v2.OutOfBandConsent;
 import com.iabtcf.v2.SegmentType;
+import com.iabtcf.v2.TCModel;
 
 import java.util.StringJoiner;
 import java.util.stream.IntStream;
@@ -12,22 +12,19 @@ import java.util.stream.IntStream;
  */
 class TCModelEncoder {
 
-	static String encode(TCModelBuilder builder) {
+	static String encode(TCModel builder) {
 		final StringJoiner sj = new StringJoiner(".")
-				.add(CoreStringEncoder.encode(builder.getCoreStringBuilder().build()));
+				.add(CoreStringEncoder.encode(builder.getCoreString()));
 
-		if (builder.hasOutOfBandConsentFields()) {
-			final OutOfBandConsent outOfBandBuilder = builder.getOutOfBandBuilder().build();
-			if (outOfBandBuilder.getAllDisclosedVendors().count() > 0) {
-				sj.add(VendorEncoder.encode(SegmentType.DISCLOSED_VENDOR, RangeData.from(outOfBandBuilder.getAllDisclosedVendors())));
+		builder.getOutOfBandConsent().ifPresent(oob -> {
+			if (oob.getAllDisclosedVendors().count() > 0) {
+				sj.add(VendorEncoder.encode(SegmentType.DISCLOSED_VENDOR, RangeData.from(oob.getAllDisclosedVendors())));
 			}
-			if (outOfBandBuilder.getAllAllowedVendors().count() > 0) {
-				sj.add(VendorEncoder.encode(SegmentType.ALLOWED_VENDOR, RangeData.from(outOfBandBuilder.getAllAllowedVendors())));
+			if (oob.getAllAllowedVendors().count() > 0) {
+				sj.add(VendorEncoder.encode(SegmentType.ALLOWED_VENDOR, RangeData.from(oob.getAllAllowedVendors())));
 			}
-		}
-		if (builder.hasPublisherTCFields()) {
-			sj.add(PublisherTCEncoder.encode(builder.getPublisherTCBuilder().build()));
-		}
+		});
+		builder.getPublisherTC().ifPresent(ptc -> sj.add(PublisherTCEncoder.encode(ptc)));
 
 		return sj.toString();
 	}

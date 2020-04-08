@@ -22,7 +22,6 @@
             <groupId>com.iabtcf</groupId>
             <artifactId>decoder</artifactId>
             <version>${parent.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

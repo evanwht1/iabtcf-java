@@ -37,39 +37,50 @@ public interface OutOfBandConsent {
 		return new Builder();
 	}
 
-	static Builder newBuilder(OutOfBandConsent oob) {
-		return new Builder(oob);
+	static Builder newBuilder(final OutOfBandConsent outOfBandConsent) {
+		return new Builder(outOfBandConsent);
 	}
 
 	class Builder {
 
-		private BitSet disclosedVendors = new BitSet();
-		private BitSet allowedVendors = new BitSet();
+		private BitSet disclosedVendors;
+		private BitSet allowedVendors;
 
-		public Builder() {}
+		private Builder() {
+			disclosedVendors = EmptyConstants.BIT_SET;
+			allowedVendors = EmptyConstants.BIT_SET;
+		}
 
-		public Builder(OutOfBandConsent outOfBandConsent) {
+		private Builder(final OutOfBandConsent outOfBandConsent) {
+			disclosedVendors = new BitSet();
+			allowedVendors = new BitSet();
 			outOfBandConsent.getAllDisclosedVendors().forEach(disclosedVendors::set);
 			outOfBandConsent.getAllAllowedVendors().forEach(allowedVendors::set);
 		}
 
 		public Builder addDisclosedVendor(final int vendor) {
+			if (disclosedVendors == EmptyConstants.BIT_SET) {
+				disclosedVendors = new BitSet();
+			}
 			disclosedVendors.set(vendor);
 			return this;
 		}
 
 		public Builder disclosedVendors(final BitSet set) {
-			disclosedVendors = set;
+			disclosedVendors = set == null ? EmptyConstants.BIT_SET : set;
 			return this;
 		}
 
 		public Builder addAllowedVendor(final int vendor) {
+			if (allowedVendors == EmptyConstants.BIT_SET) {
+				allowedVendors = new BitSet();
+			}
 			allowedVendors.set(vendor);
 			return this;
 		}
 
 		public Builder allowedVendors(final BitSet set) {
-			allowedVendors = set;
+			allowedVendors = set == null ? EmptyConstants.BIT_SET : set;
 			return this;
 		}
 
