@@ -3,23 +3,22 @@ package com.iabtcf.v2.encoder;
 import com.iabtcf.v2.Field;
 
 import java.time.Instant;
-import java.util.BitSet;
 
 /**
  * @author evanwht1@gmail.com
  */
-class Bits {
+class BitOutputStream {
 
 	private static final int DEFAULT_SIZE = 2048;
 
 	private byte[] buffer;
 	private int pos;
 
-	Bits() {
+	BitOutputStream() {
 		this(DEFAULT_SIZE);
 	}
 
-	Bits(int size) {
+	BitOutputStream(int size) {
 		buffer = new byte[bytesForBits(size)];
 		pos = 0;
 	}
@@ -48,16 +47,6 @@ class Bits {
 		ensureWriteable(length);
 		for (int shiftPos = length - 1; shiftPos >= 0; shiftPos--) {
 			writeBit((value >>> shiftPos & 1) == 1);
-		}
-	}
-
-	void write(Field field, BitSet set) {
-		write(field.getLength(), set);
-	}
-
-	void write(int length, BitSet set) {
-		for (int i = 1; i <= length; i++) {
-			write(set.get(i));
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.IntStream;
 
 /**
  * @author evanwht1@gmail.com
@@ -12,6 +13,12 @@ public class RangeData {
 
 	private int maxId = -1;
 	private Set<Range> ranges = new TreeSet<>();
+
+	public static RangeData from(IntStream stream) {
+		final RangeData rangeData = new RangeData();
+		stream.forEach(rangeData::add);
+		return rangeData;
+	}
 
 	boolean isEmpty() {
 		return maxId == -1;

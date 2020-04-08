@@ -4,6 +4,7 @@ import com.iabtcf.v2.Field.Vendors;
 import com.iabtcf.v2.SegmentType;
 
 import java.util.StringJoiner;
+import java.util.stream.IntStream;
 
 /**
  * @author evanwht1@gmail.com
@@ -12,7 +13,7 @@ class TCModelEncoder {
 
 	static String encode(TCModelBuilder builder) {
 		final StringJoiner sj = new StringJoiner(".")
-				.add(CoreStringEncoder.writeCoreString(builder.coreStringBuilder));
+				.add(CoreStringEncoder.writeCoreString(builder.getCoreStringBuilder().build()));
 
 		final OutOfBandBuilder outOfBandBuilder = builder.getOutOfBandBuilder();
 		if (!outOfBandBuilder.disclosedVendors.isEmpty()) {
@@ -30,22 +31,26 @@ class TCModelEncoder {
 		return sj.toString();
 	}
 
-	static void writeRange(Bits bits, RangeData data) {
+	static void writeRange(BitOutputStream bs, IntStream stream) {
+		writeRange(bs, RangeData.from(stream));
+	}
+
+	static void writeRange(BitOutputStream bs, RangeData data) {
 		int maxVendor = data.getMaxId();
-		bits.write(Vendors.MAX_VENDOR_ID, maxVendor);
+		bs.write(Vendors.MAX_VENDOR_ID, maxVendor);
 		if (!shouldRangeEncode(maxVendor, data)) {
-			bits.write(Vendors.IS_RANGE_ENCODING, false);
+			bs.write(Vendors.IS_RANGE_ENCODING, false);
 			for (int i = 0; i < maxVendor; i++) {
-				bits.write(data.get(i));
+				bs.write(data.get(i+1));
 			}
 		} else {
-			bits.write(Vendors.IS_RANGE_ENCODING, true);
-			bits.write(Vendors.NUM_ENTRIES, data.size());
+			bs.write(Vendors.IS_RANGE_ENCODING, true);
+			bs.write(Vendors.NUM_ENTRIES, data.size());
 			data.getRanges().forEach(r -> {
-				bits.write(Vendors.IS_A_RANGE, r.isARange());
-				bits.write(Vendors.START_OR_ONLY_VENDOR_ID, r.lower);
+				bs.write(Vendors.IS_A_RANGE, r.isARange());
+				bs.write(Vendors.START_OR_ONLY_VENDOR_ID, r.lower);
 				if (r.isARange()) {
-					bits.write(Vendors.END_VENDOR_ID, r.upper);
+					bs.write(Vendors.END_VENDOR_ID, r.upper);
 				}
 			});
 		}

@@ -13,9 +13,9 @@ import static com.iabtcf.v2.encoder.TCModelEncoder.writeRange;
 public class VendorEncoder {
 
 	static String writeVendorString(SegmentType type, RangeData data) {
-		final Bits bits = new Bits();
-		bits.write(Field.Vendors.SEGMENT_TYPE, type.getValue());
-		writeRange(bits, data);
-		return Base64.getEncoder().encodeToString(bits.toByteArray());
+		final BitOutputStream bitOutputStream = new BitOutputStream();
+		bitOutputStream.write(Field.Vendors.SEGMENT_TYPE, type.getValue());
+		writeRange(bitOutputStream, data);
+		return Base64.getEncoder().encodeToString(bitOutputStream.toByteArray());
 	}
 }

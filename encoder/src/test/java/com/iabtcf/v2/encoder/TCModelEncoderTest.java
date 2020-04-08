@@ -22,7 +22,7 @@ public class TCModelEncoderTest {
 
 	@Test
 	void testEncodeCoreString() {
-		CoreStringBuilder builder = new CoreStringBuilder()
+		CoreString.Builder builder = CoreString.newBuilder()
 				.consentLanguage("en")
 				.addPurposeConsent(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE)
 				.addPurposesLegitimateInterest(Purpose.SELECT_BASIC_ADS)
@@ -43,7 +43,8 @@ public class TCModelEncoderTest {
 				.consentManagerProviderVersion(9)
 				.addSpecialFeatureOptedIn(SpecialFeature.USE_PRECISE_GEOLOCATION_DATA);
 
-		final String encode = CoreStringEncoder.writeCoreString(builder);
+		final CoreString build = builder.build();
+		final String encode = CoreStringEncoder.writeCoreString(build);
 		final TCModel decode = TCModelDecoder.decode(encode);
 		final CoreString coreString = decode.getCoreString();
 

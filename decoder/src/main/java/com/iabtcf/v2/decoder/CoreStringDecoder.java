@@ -1,10 +1,12 @@
 package com.iabtcf.v2.decoder;
 
-import com.iabtcf.v2.Purpose;
+import com.iabtcf.v2.CoreString;
 import com.iabtcf.v2.RestrictionType;
 
 import java.util.BitSet;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.iabtcf.v2.Field.CoreString.CMP_ID;
 import static com.iabtcf.v2.Field.CoreString.CMP_VERSION;
@@ -31,14 +33,14 @@ import static com.iabtcf.v2.Field.PublisherRestrictions.RESTRICTION_TYPE;
 class CoreStringDecoder {
 
 	/**
-	 * Builds a {@link CoreStringImpl} from the given bit vector.
+	 * Builds a {@link CoreString} from the given bit input stream.
 	 *
-	 * @param bitInputStream BitVector created from the first segment of the web safe 64 encoded TC string
+	 * @param bitInputStream BitInputStream created from the first segment of the web safe 64 encoded TC string
 	 * @return a CoreString with all fields parsed
 	 */
-	static CoreStringImpl decode(final int version, BitInputStream bitInputStream) {
+	static CoreString decode(final int version, BitInputStream bitInputStream) {
 		// Read fields in order!
-		return CoreStringImpl.newBuilder()
+		return CoreString.newBuilder()
 		                     .version(version)
 		                     .consentRecordCreated(bitInputStream.readInstant(CREATED))
 		                     .consentRecordLastUpdated(bitInputStream.readInstant(LAST_UPDATED))
@@ -50,9 +52,9 @@ class CoreStringDecoder {
 		                     .policyVersion(bitInputStream.readInt(TCF_POLICY_VERSION))
 		                     .isServiceSpecific(bitInputStream.readBit(IS_SERVICE_SPECIFIC))
 		                     .useNonStandardStacks(bitInputStream.readBit(USE_NON_STANDARD_STACKS))
-		                     .specialFeaturesOptInts(bitInputStream.readBitSet(SPECIAL_FEATURE_OPT_INS.getLength()))
-		                     .purposesConsent(bitInputStream.readBitSet(PURPOSES_CONSENT.getLength()))
-		                     .purposesLITransparency(bitInputStream.readBitSet(PURPOSE_LI_TRANSPARENCY.getLength()))
+		                     .specialFeatureOptIns(bitInputStream.readBitSet(SPECIAL_FEATURE_OPT_INS.getLength()))
+		                     .purposeConsents(bitInputStream.readBitSet(PURPOSES_CONSENT.getLength()))
+		                     .purposeLegitimateInterests(bitInputStream.readBitSet(PURPOSE_LI_TRANSPARENCY.getLength()))
 		                     .isPurposeOneTreatment(bitInputStream.readBit(PURPOSE_ONE_TREATMENT))
 		                     .publisherCountryCode(bitInputStream.readString(PUBLISHER_CC))
 		                     .vendorConsents(VendorsDecoder.decode(bitInputStream))
@@ -62,17 +64,17 @@ class CoreStringDecoder {
 	}
 
 	/**
-	 * Builds a map of purpose id to the restrction type and a list of vendors it applies to.
+	 * Builds a map of purpose id to the restriction type and a list of vendors it applies to.
 	 *
-	 * @param bitInputStream bit vector to read from
+	 * @param bitInputStream bit input stream to read from
 	 * @return map of purpose to publisher restriction and vendors it applies to
 	 */
-	private static EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> decodePublisherRestrictions(BitInputStream bitInputStream) {
-		final EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> restrictions = new EnumMap<>(Purpose.class);
+	private static Map<Integer, EnumMap<RestrictionType, BitSet>> decodePublisherRestrictions(BitInputStream bitInputStream) {
+		final Map<Integer, EnumMap<RestrictionType, BitSet>> restrictions = new HashMap<>();
 		int numberOfPublisherRestrictions = bitInputStream.readInt(NUM_PUB_RESTRICTIONS);
 
 		for (int i = 0; i < numberOfPublisherRestrictions; i++) {
-			Purpose purpose = Purpose.valueOf(bitInputStream.readInt(PURPOSE_ID));
+			int purpose = bitInputStream.readInt(PURPOSE_ID);
 			int restrictionTypeId = bitInputStream.readInt(RESTRICTION_TYPE);
 			RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeId);
 

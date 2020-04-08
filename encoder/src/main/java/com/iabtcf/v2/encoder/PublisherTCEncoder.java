@@ -11,18 +11,18 @@ import java.util.Base64;
 public class PublisherTCEncoder {
 
 	static String writePublisherTCString(final PublisherTCBuilder builder) {
-		final Bits bits = new Bits();
-		bits.write(Field.PublisherTC.SEGMENT_TYPE, SegmentType.PUBLISHER_TC.getValue());
-		bits.write(Field.PublisherTC.PUB_PURPOSE_CONSENT, builder.publisherPurposes);
-		bits.write(Field.PublisherTC.PUB_PURPOSES_LI_TRANSPARENCY, builder.publisherPurposesLI);
+		final BitOutputStream bs = new BitOutputStream();
+		bs.write(Field.PublisherTC.SEGMENT_TYPE, SegmentType.PUBLISHER_TC.getValue());
+		BitOutputStreamUtil.write(bs, Field.PublisherTC.PUB_PURPOSE_CONSENT, builder.publisherPurposes);
+		BitOutputStreamUtil.write(bs, Field.PublisherTC.PUB_PURPOSES_LI_TRANSPARENCY, builder.publisherPurposesLI);
 		final int numCustomPurposes = builder.publisherCustomPurposes.cardinality();
-		bits.write(Field.PublisherTC.NUM_CUSTOM_PURPOSES, numCustomPurposes);
+		bs.write(Field.PublisherTC.NUM_CUSTOM_PURPOSES, numCustomPurposes);
 		for (int i = 0; i < numCustomPurposes; i++) {
-			bits.write(builder.publisherCustomPurposes.get(i));
+			bs.write(builder.publisherCustomPurposes.get(i));
 		}
 		for (int i = 0; i < numCustomPurposes; i++) {
-			bits.write(builder.publisherCustomPurposesLI.get(i));
+			bs.write(builder.publisherCustomPurposesLI.get(i));
 		}
-		return Base64.getEncoder().encodeToString(bits.toByteArray());
+		return Base64.getEncoder().encodeToString(bs.toByteArray());
 	}
 }

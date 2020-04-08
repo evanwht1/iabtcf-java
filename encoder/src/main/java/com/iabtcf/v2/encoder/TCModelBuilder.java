@@ -1,5 +1,6 @@
 package com.iabtcf.v2.encoder;
 
+import com.iabtcf.v2.CoreString;
 import com.iabtcf.v2.TCModel;
 
 /**
@@ -7,18 +8,18 @@ import com.iabtcf.v2.TCModel;
  */
 public class TCModelBuilder {
 
-	CoreStringBuilder coreStringBuilder;
+	CoreString.Builder coreStringBuilder;
 	OutOfBandBuilder outOfBandBuilder;
 	PublisherTCBuilder publisherTCBuilder;
 
 	public TCModelBuilder() {
-		coreStringBuilder = new CoreStringBuilder();
+		coreStringBuilder = CoreString.newBuilder();
 		outOfBandBuilder = new OutOfBandBuilder();
 		publisherTCBuilder = new PublisherTCBuilder();
 	}
 
 	public TCModelBuilder(TCModel model) {
-		coreStringBuilder = new CoreStringBuilder(model.getCoreString());
+		coreStringBuilder = CoreString.newBuilder(model.getCoreString());
 		if (model.getOutOfBandConsent().isPresent()) {
 			outOfBandBuilder = new OutOfBandBuilder(model.getOutOfBandConsent().get());
 		} else {
@@ -31,7 +32,7 @@ public class TCModelBuilder {
 		}
 	}
 
-	public CoreStringBuilder getCoreStringBuilder() {
+	public CoreString.Builder getCoreStringBuilder() {
 		return coreStringBuilder;
 	}
 
@@ -43,7 +44,7 @@ public class TCModelBuilder {
 		return publisherTCBuilder;
 	}
 
-	public String build() {
+	public String buildTCString() {
 		return TCModelEncoder.encode(this);
 	}
 }
