@@ -1,6 +1,7 @@
 package com.iabtcf.v2.encoder;
 
 import com.iabtcf.v2.CoreString;
+import com.iabtcf.v2.OutOfBandConsent;
 import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.TCModel;
 
@@ -10,18 +11,18 @@ import com.iabtcf.v2.TCModel;
 public class TCModelBuilder {
 
 	private CoreString.Builder coreStringBuilder;
-	private OutOfBandBuilder outOfBandBuilder;
+	private OutOfBandConsent.Builder outOfBandBuilder;
 	private PublisherTC.Builder publisherTCBuilder;
 
 	public TCModelBuilder() {
 		coreStringBuilder = CoreString.newBuilder();
-		outOfBandBuilder = new OutOfBandBuilder();
+		outOfBandBuilder = OutOfBandConsent.newBuilder();
 	}
 
 	public TCModelBuilder(TCModel model) {
 		coreStringBuilder = CoreString.newBuilder(model.getCoreString());
 		if (model.getOutOfBandConsent().isPresent()) {
-			outOfBandBuilder = new OutOfBandBuilder(model.getOutOfBandConsent().get());
+			outOfBandBuilder = OutOfBandConsent.newBuilder(model.getOutOfBandConsent().get());
 		}
 		if (model.getPublisherTC().isPresent()) {
 			publisherTCBuilder = PublisherTC.newBuilder(model.getPublisherTC().get());
@@ -32,11 +33,15 @@ public class TCModelBuilder {
 		return coreStringBuilder;
 	}
 
-	public OutOfBandBuilder getOutOfBandBuilder() {
+	public OutOfBandConsent.Builder getOutOfBandBuilder() {
 		if (outOfBandBuilder == null) {
-			outOfBandBuilder = new OutOfBandBuilder();
+			outOfBandBuilder = OutOfBandConsent.newBuilder();
 		}
 		return outOfBandBuilder;
+	}
+
+	boolean hasOutOfBandConsentField() {
+		return outOfBandBuilder != null;
 	}
 
 	public PublisherTC.Builder getPublisherTCBuilder() {

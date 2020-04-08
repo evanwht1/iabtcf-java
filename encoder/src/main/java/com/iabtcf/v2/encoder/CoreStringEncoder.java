@@ -16,7 +16,7 @@ import static com.iabtcf.v2.encoder.TCModelEncoder.writeRange;
  */
 class CoreStringEncoder {
 
-	static String writeCoreString(final com.iabtcf.v2.CoreString coreString) {
+	static String encode(final com.iabtcf.v2.CoreString coreString) {
 		final BitOutputStream bs = new BitOutputStream();
 		bs.write(CoreString.VERSION, coreString.getVersion());
 		bs.write(CoreString.CREATED, coreString.getCreated());

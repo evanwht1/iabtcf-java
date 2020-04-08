@@ -2,6 +2,8 @@ package com.iabtcf.v2.encoder;
 
 import com.iabtcf.v2.CoreString;
 import com.iabtcf.v2.Field;
+import com.iabtcf.v2.OutOfBandConsent;
+import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
 import com.iabtcf.v2.SpecialFeature;
@@ -21,33 +23,44 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TCModelEncoderTest {
 
 	@Test
-	void testEncodeCoreString() {
-		CoreString.Builder builder = CoreString.newBuilder()
-				.consentLanguage("en")
-				.addPurposeConsent(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE)
-				.addPurposesLegitimateInterest(Purpose.SELECT_BASIC_ADS)
-				.addVendorConsent(3)
-				.addVendorLegitimateInterest(4)
-				.addPublisherRestriction(5, Purpose.CREATE_PERSONALISED_ADS_PROFILE, RestrictionType.NOT_ALLOWED)
-				.version(2)
-				.policyVersion(5)
-				.vendorListVersion(6)
-				.isServiceSpecific(true)
-				.useNonStandardStacks(true)
-				.isPurposeOneTreatment(true)
-				.publisherCountryCode("US")
-				.consentScreen(7)
-				.consentRecordCreated(Instant.ofEpochMilli(10000L))
-				.consentRecordLastUpdated(Instant.ofEpochMilli(11000L))
-				.consentManagerProviderId(8)
-				.consentManagerProviderVersion(9)
-				.addSpecialFeatureOptedIn(SpecialFeature.USE_PRECISE_GEOLOCATION_DATA);
+	void testEncodeFullString() {
+		final TCModelBuilder builder = new TCModelBuilder();
 
-		final CoreString build = builder.build();
-		final String encode = CoreStringEncoder.writeCoreString(build);
-		final TCModel decode = TCModelDecoder.decode(encode);
+		builder.getCoreStringBuilder()
+		       .consentLanguage("en")
+		       .addPurposeConsent(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE)
+		       .addPurposesLegitimateInterest(Purpose.SELECT_BASIC_ADS)
+		       .addVendorConsent(3)
+		       .addVendorLegitimateInterest(4)
+		       .addPublisherRestriction(5, Purpose.CREATE_PERSONALISED_ADS_PROFILE, RestrictionType.NOT_ALLOWED)
+		       .version(2)
+		       .policyVersion(5)
+		       .vendorListVersion(6)
+		       .isServiceSpecific(true)
+		       .useNonStandardStacks(true)
+		       .isPurposeOneTreatment(true)
+		       .publisherCountryCode("US")
+		       .consentScreen(7)
+		       .consentRecordCreated(Instant.ofEpochMilli(10000L))
+		       .consentRecordLastUpdated(Instant.ofEpochMilli(11000L))
+		       .consentManagerProviderId(8)
+		       .consentManagerProviderVersion(9)
+		       .addSpecialFeatureOptedIn(SpecialFeature.USE_PRECISE_GEOLOCATION_DATA);
+
+		builder.getOutOfBandBuilder()
+		       .addAllowedVendor(10)
+		       .addDisclosedVendor(11);
+
+		builder.getPublisherTCBuilder()
+		       .addPurposeConsent(12)
+		       .addPurposeLegitimateInterest(13)
+		       .addCustomPurposeConsent(14)
+		       .addCustomPurposeLegitimateInterest(15);
+
+		final String tcString = builder.buildTCString();
+		final TCModel decode = TCModelDecoder.decode(tcString);
+
 		final CoreString coreString = decode.getCoreString();
-
 		assertEquals(2, coreString.getVersion());
 		assertEquals(5, coreString.getPolicyVersion());
 		assertEquals(6, coreString.getVendorListVersion());
@@ -71,6 +84,24 @@ public class TCModelEncoderTest {
 		assertEquals(1, coreString.getAllConsentedVendors().count());
 		assertTrue(coreString.isVendorLegitimateInterest(4));
 		assertEquals(1, coreString.getAllLegitimateInterestVendors().count());
+
+		assertTrue(decode.getOutOfBandConsent().isPresent());
+		final OutOfBandConsent outOfBandConsent = decode.getOutOfBandConsent().get();
+		assertTrue(outOfBandConsent.isVendorAllowed(10));
+		assertEquals(1, outOfBandConsent.getAllAllowedVendors().count());
+		assertTrue(outOfBandConsent.isVendorDisclosed(11));
+		assertEquals(1, outOfBandConsent.getAllDisclosedVendors().count());
+
+		assertTrue(decode.getPublisherTC().isPresent());
+		final PublisherTC publisherTC1 = decode.getPublisherTC().get();
+		assertTrue(publisherTC1.isPurposeConsented(12));
+		assertEquals(1, publisherTC1.getAllConsentedPurposes().count());
+		assertTrue(publisherTC1.isPurposeLegitimateInterest(13));
+		assertEquals(1, publisherTC1.getAllLegitimateInterestPurposes().count());
+		assertTrue(publisherTC1.isCustomPurposeConsented(14));
+		assertEquals(1, publisherTC1.getAllConsentedCustomPurposes().count());
+		assertTrue(publisherTC1.isCustomPurposeLegitimateInterest(15));
+		assertEquals(1, publisherTC1.getAllLegitimateInterestCustomPurposes().count());
 	}
 
 	@Test

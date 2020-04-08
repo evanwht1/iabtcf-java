@@ -19,17 +19,23 @@ class TCModelImpl implements TCModel {
     private final Supplier<CoreString> coreStringSupplier;
     private CoreString coreString;
 
-    private OutOfBandConsent outOfBandVendors;
+    private final Supplier<OutOfBandConsent> outOfBandConsentSupplier;
+    private OutOfBandConsent outOfBandConsent;
 
-    private final Supplier<PublisherTC> publisherPurposesSupplier;
-    private PublisherTC publisherPurposes;
+    private final Supplier<PublisherTC> publisherTCSupplier;
+    private PublisherTC publisherTC;
 
     private TCModelImpl(final Builder b) {
         coreStringSupplier = b.coreString;
         if (b.disclosedVendors != Constants.EMPTY_SUPPLIER || b.allowedVendors != Constants.EMPTY_SUPPLIER) {
-            outOfBandVendors = new OutOfBandVendors(b.disclosedVendors, b.allowedVendors);
+            outOfBandConsentSupplier = () -> OutOfBandConsent.newBuilder()
+                                                             .disclosedVendors(b.disclosedVendors.get())
+                                                             .allowedVendors(b.allowedVendors.get())
+                                                             .build();
+        } else {
+            outOfBandConsentSupplier = null;
         }
-        publisherPurposesSupplier = b.publisherPurposes;
+        publisherTCSupplier = b.publisherPurposes;
     }
 
     static Builder newBuilder() {
@@ -46,15 +52,18 @@ class TCModelImpl implements TCModel {
 
     @Override
     public Optional<OutOfBandConsent> getOutOfBandConsent() {
-        return Optional.ofNullable(outOfBandVendors);
+        if (outOfBandConsent == null && outOfBandConsentSupplier != null) {
+            outOfBandConsent = outOfBandConsentSupplier.get();
+        }
+        return Optional.ofNullable(outOfBandConsent);
     }
 
     @Override
     public Optional<PublisherTC> getPublisherTC() {
-        if (publisherPurposes == null && publisherPurposesSupplier != null) {
-            publisherPurposes = publisherPurposesSupplier.get();
+        if (publisherTC == null && publisherTCSupplier != null) {
+            publisherTC = publisherTCSupplier.get();
         }
-        return Optional.ofNullable(publisherPurposes);
+        return Optional.ofNullable(publisherTC);
     }
 
     @Override
@@ -66,22 +75,22 @@ class TCModelImpl implements TCModel {
             return false;
         }
         final TCModelImpl that = (TCModelImpl) o;
-        return coreString.equals(that.coreString) &&
-               outOfBandVendors.equals(that.outOfBandVendors) &&
-               Objects.equals(publisherPurposes, that.publisherPurposes);
+        return getCoreString().equals(that.getCoreString()) &&
+               getOutOfBandConsent().equals(that.getOutOfBandConsent()) &&
+               Objects.equals(getPublisherTC(), that.getPublisherTC());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coreString, outOfBandVendors, publisherPurposes);
+        return Objects.hash(getCoreString(), getOutOfBandConsent(), getPublisherTC());
     }
 
     @Override
     public String toString() {
         return "BitVectorGDPRTransparencyAndConsent{" +
-               "coreString: " + coreString +
-               ", outOfBandVendors: " + outOfBandVendors +
-               ", publisherPurposes: " + publisherPurposes +
+               "coreString: " + getCoreString() +
+               ", outOfBandVendors: " + getOutOfBandConsent() +
+               ", publisherPurposes: " + getPublisherTC() +
                '}';
     }
 

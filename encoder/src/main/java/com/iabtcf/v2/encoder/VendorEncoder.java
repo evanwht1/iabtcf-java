@@ -12,7 +12,7 @@ import static com.iabtcf.v2.encoder.TCModelEncoder.writeRange;
  */
 public class VendorEncoder {
 
-	static String writeVendorString(SegmentType type, RangeData data) {
+	static String encode(SegmentType type, RangeData data) {
 		final BitOutputStream bitOutputStream = new BitOutputStream();
 		bitOutputStream.write(Field.Vendors.SEGMENT_TYPE, type.getValue());
 		writeRange(bitOutputStream, data);
