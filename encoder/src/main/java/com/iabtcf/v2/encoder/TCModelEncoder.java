@@ -41,8 +41,8 @@ class TCModelEncoder {
 		bs.write(Vendors.MAX_VENDOR_ID, maxVendor);
 		if (!shouldRangeEncode(maxVendor, data)) {
 			bs.write(Vendors.IS_RANGE_ENCODING, false);
-			for (int i = 0; i < maxVendor; i++) {
-				bs.write(data.get(i+1));
+			for (int i = 1; i <= maxVendor; i++) {
+				bs.write(data.get(i));
 			}
 		} else {
 			bs.write(Vendors.IS_RANGE_ENCODING, true);

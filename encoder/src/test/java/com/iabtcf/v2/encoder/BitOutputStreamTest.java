@@ -64,7 +64,7 @@ public class BitOutputStreamTest {
 		final BitSet bitSet = new BitSet();
 		bitSet.set(1);
 		bitSet.set(6);
-		BitOutputStreamUtil.write(bs, Byte.SIZE, bitSet);
+		bs.write(Byte.SIZE, bitSet::get);
 		byte[] bytes = bs.toByteArray();
 		assertEquals(1, bytes.length);
 		// bit sets are 1 indexed but we write in 0 index so 0th and 5th bit should be set resulting in -124

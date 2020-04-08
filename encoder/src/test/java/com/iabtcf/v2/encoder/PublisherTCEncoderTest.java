@@ -3,6 +3,7 @@ package com.iabtcf.v2.encoder;
 import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.TCModel;
 import com.iabtcf.v2.decoder.TCModelDecoder;
+import com.iabtcf.v2.decoder.exceptions.UnsupportedVersionException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PublisherTCEncoderTest {
 
 	@Test
-	void testEncode() {
+	void testEncode() throws UnsupportedVersionException {
 		final PublisherTC publisherTC = PublisherTC.newBuilder()
 		                                     .addPurposeConsent(1)
 		                                     .addPurposeLegitimateInterest(2)

@@ -6,6 +6,7 @@ import com.iabtcf.v2.RestrictionType;
 import com.iabtcf.v2.SpecialFeature;
 import com.iabtcf.v2.TCModel;
 import com.iabtcf.v2.decoder.TCModelDecoder;
+import com.iabtcf.v2.decoder.exceptions.UnsupportedVersionException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CoreStringEncoderTest {
 
 	@Test
-	void testEncodeCoreString() {
+	void testEncodeCoreString() throws UnsupportedVersionException {
 		CoreString.Builder builder = CoreString.newBuilder()
 		                                       .consentLanguage("en")
 		                                       .addPurposeConsent(Purpose.STORE_AND_ACCESS_INFO_ON_DEVICE)
