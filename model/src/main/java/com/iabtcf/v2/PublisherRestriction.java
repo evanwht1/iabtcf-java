@@ -4,7 +4,7 @@ import java.util.stream.IntStream;
 
 public interface PublisherRestriction {
 
-    Purpose getPurpose();
+    int getPurposeId();
 
     RestrictionType getRestrictionType();
 

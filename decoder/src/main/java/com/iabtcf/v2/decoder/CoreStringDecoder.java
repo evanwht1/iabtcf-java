@@ -1,6 +1,6 @@
 package com.iabtcf.v2.decoder;
 
-import com.iabtcf.v2.Purpose;
+import com.iabtcf.v2.CoreString;
 import com.iabtcf.v2.RestrictionType;
 
 import java.util.BitSet;
@@ -33,52 +33,52 @@ import static com.iabtcf.v2.Field.PublisherRestrictions.RESTRICTION_TYPE;
 class CoreStringDecoder {
 
 	/**
-	 * Builds a {@link CoreStringImpl} from the given bit vector.
+	 * Builds a {@link CoreString} from the given bit input stream.
 	 *
-	 * @param bitVector BitVector created from the first segment of the web safe 64 encoded TC string
+	 * @param bitInputStream BitInputStream created from the first segment of the web safe 64 encoded TC string
 	 * @return a CoreString with all fields parsed
 	 */
-	static CoreStringImpl decode(final int version, BitVector bitVector) {
+	static CoreString decode(final int version, BitInputStream bitInputStream) {
 		// Read fields in order!
-		return CoreStringImpl.newBuilder()
+		return CoreString.newBuilder()
 		                     .version(version)
-		                     .consentRecordCreated(bitVector.readNextInstantFromDeciSecond(CREATED))
-		                     .consentRecordLastUpdated(bitVector.readNextInstantFromDeciSecond(LAST_UPDATED))
-		                     .consentManagerProviderId(bitVector.readNextInt(CMP_ID))
-		                     .consentManagerProviderVersion(bitVector.readNextInt(CMP_VERSION))
-		                     .consentScreen(bitVector.readNextInt(CONSENT_SCREEN))
-		                     .consentLanguage(bitVector.readNextString(CONSENT_LANGUAGE))
-		                     .vendorListVersion(bitVector.readNextInt(VENDOR_LIST_VERSION))
-		                     .policyVersion(bitVector.readNextInt(TCF_POLICY_VERSION))
-		                     .isServiceSpecific(bitVector.readNextBit(IS_SERVICE_SPECIFIC))
-		                     .useNonStandardStacks(bitVector.readNextBit(USE_NON_STANDARD_STACKS))
-		                     .specialFeaturesOptInts(bitVector.readNextBitSet(SPECIAL_FEATURE_OPT_INS.getLength()))
-		                     .purposesConsent(bitVector.readNextBitSet(PURPOSES_CONSENT.getLength()))
-		                     .purposesLITransparency(bitVector.readNextBitSet(PURPOSE_LI_TRANSPARENCY.getLength()))
-		                     .isPurposeOneTreatment(bitVector.readNextBit(PURPOSE_ONE_TREATMENT))
-		                     .publisherCountryCode(bitVector.readNextString(PUBLISHER_CC))
-		                     .vendorConsents(VendorsDecoder.decode(bitVector))
-		                     .vendorLegitimateInterests(VendorsDecoder.decode(bitVector))
-		                     .publisherRestrictions(decodePublisherRestrictions(bitVector))
+		                     .consentRecordCreated(bitInputStream.readInstant(CREATED))
+		                     .consentRecordLastUpdated(bitInputStream.readInstant(LAST_UPDATED))
+		                     .consentManagerProviderId(bitInputStream.readInt(CMP_ID))
+		                     .consentManagerProviderVersion(bitInputStream.readInt(CMP_VERSION))
+		                     .consentScreen(bitInputStream.readInt(CONSENT_SCREEN))
+		                     .consentLanguage(bitInputStream.readString(CONSENT_LANGUAGE))
+		                     .vendorListVersion(bitInputStream.readInt(VENDOR_LIST_VERSION))
+		                     .policyVersion(bitInputStream.readInt(TCF_POLICY_VERSION))
+		                     .isServiceSpecific(bitInputStream.readBit(IS_SERVICE_SPECIFIC))
+		                     .useNonStandardStacks(bitInputStream.readBit(USE_NON_STANDARD_STACKS))
+		                     .specialFeatureOptIns(bitInputStream.readBitSet(SPECIAL_FEATURE_OPT_INS.getLength()))
+		                     .purposeConsents(bitInputStream.readBitSet(PURPOSES_CONSENT.getLength()))
+		                     .purposeLegitimateInterests(bitInputStream.readBitSet(PURPOSE_LI_TRANSPARENCY.getLength()))
+		                     .isPurposeOneTreatment(bitInputStream.readBit(PURPOSE_ONE_TREATMENT))
+		                     .publisherCountryCode(bitInputStream.readString(PUBLISHER_CC))
+		                     .vendorConsents(VendorsDecoder.decode(bitInputStream))
+		                     .vendorLegitimateInterests(VendorsDecoder.decode(bitInputStream))
+		                     .publisherRestrictions(decodePublisherRestrictions(bitInputStream))
 		                     .build();
 	}
 
 	/**
-	 * Builds a map of purpose id to the restrction type and a list of vendors it applies to.
+	 * Builds a map of purpose id to the restriction type and a list of vendors it applies to.
 	 *
-	 * @param bitVector bit vector to read from
+	 * @param bitInputStream bit input stream to read from
 	 * @return map of purpose to publisher restriction and vendors it applies to
 	 */
-	private static EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> decodePublisherRestrictions(BitVector bitVector) {
-		final EnumMap<Purpose, EnumMap<RestrictionType, BitSet>> restrictions = new EnumMap<>(Purpose.class);
-		int numberOfPublisherRestrictions = bitVector.readNextInt(NUM_PUB_RESTRICTIONS);
+	private static Map<Integer, EnumMap<RestrictionType, BitSet>> decodePublisherRestrictions(BitInputStream bitInputStream) {
+		final Map<Integer, EnumMap<RestrictionType, BitSet>> restrictions = new HashMap<>();
+		int numberOfPublisherRestrictions = bitInputStream.readInt(NUM_PUB_RESTRICTIONS);
 
 		for (int i = 0; i < numberOfPublisherRestrictions; i++) {
-			Purpose purpose = Purpose.valueOf(bitVector.readNextInt(PURPOSE_ID));
-			int restrictionTypeId = bitVector.readNextInt(RESTRICTION_TYPE);
+			int purpose = bitInputStream.readInt(PURPOSE_ID);
+			int restrictionTypeId = bitInputStream.readInt(RESTRICTION_TYPE);
 			RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeId);
 
-			BitSet vendorIds = VendorsDecoder.vendorIdsFromRange(bitVector, numberOfPublisherRestrictions);
+			BitSet vendorIds = VendorsDecoder.vendorIdsFromRange(bitInputStream, numberOfPublisherRestrictions);
 
 			restrictions.computeIfAbsent(purpose, p -> new EnumMap<>(RestrictionType.class))
 						.put(restrictionType, vendorIds);

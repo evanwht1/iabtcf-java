@@ -3,23 +3,22 @@ package com.iabtcf.v2.encoder;
 import com.iabtcf.v2.Field;
 
 import java.time.Instant;
-import java.util.BitSet;
 
 /**
  * @author evanwht1@gmail.com
  */
-class Bits {
+class BitOutputStream {
 
 	private static final int DEFAULT_SIZE = 2048;
 
 	private byte[] buffer;
 	private int pos;
 
-	Bits() {
+	BitOutputStream() {
 		this(DEFAULT_SIZE);
 	}
 
-	Bits(int size) {
+	BitOutputStream(int size) {
 		buffer = new byte[bytesForBits(size)];
 		pos = 0;
 	}
@@ -51,16 +50,6 @@ class Bits {
 		}
 	}
 
-	void write(Field field, BitSet set) {
-		write(field.getLength(), set);
-	}
-
-	void write(int length, BitSet set) {
-		for (int i = 1; i <= length; i++) {
-			write(set.get(i));
-		}
-	}
-
 	void write(Field field, String value) {
 		assert (field.getLength() % Field.CHAR_LENGTH) == 0 && (field.getLength() / Field.CHAR_LENGTH) == value.length();
 		write(value);
@@ -69,6 +58,16 @@ class Bits {
 	void write(String value) {
 		for (byte b : value.getBytes()) {
 			write(Field.CHAR_LENGTH, (b - 'A'));
+		}
+	}
+
+	void write(Field field, ValueChecker checker) {
+		write(field.getLength(), checker);
+	}
+
+	void write(int length, ValueChecker checker) {
+		for (int i = 1; i <= length; i++) {
+			write(checker.check(i));
 		}
 	}
 
@@ -96,6 +95,6 @@ class Bits {
 	}
 
 	private int bytesForBits(int bits) {
-		return (bits / Byte.SIZE) + ((bits % Byte.SIZE) > 1 ? 1 : 0);
+		return (bits / Byte.SIZE) + ((bits % Byte.SIZE) > 0 ? 1 : 0);
 	}
 }

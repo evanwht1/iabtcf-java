@@ -1,8 +1,7 @@
 package com.iabtcf.v2.decoder;
 
 import com.iabtcf.v2.Field;
-
-import java.util.BitSet;
+import com.iabtcf.v2.PublisherTC;
 
 import static com.iabtcf.v2.Field.PublisherTC.NUM_CUSTOM_PURPOSES;
 import static com.iabtcf.v2.Field.PublisherTC.PUB_PURPOSES_LI_TRANSPARENCY;
@@ -22,17 +21,20 @@ class PublisherTCDecoder {
 	 *          will have already read the {@link Field.PublisherTC#SEGMENT_TYPE} and therefor the bit vector should be at the
 	 *          4th bit before calling this. Unit tests should mimic this behavior accordingly.
 	 *
-	 * @param bitVector bitvector to read from
+	 * @param bitInputStream bit input stream to read from
 	 * @return PublisherTC fields contained in the bit vector
 	 */
-	static PublisherTCImpl decode(BitVector bitVector) {
-		final BitSet consents = bitVector.readNextBitSet(PUB_PURPOSE_CONSENT.getLength());
-		final BitSet liTransparency = bitVector.readNextBitSet(PUB_PURPOSES_LI_TRANSPARENCY.getLength());
+	static PublisherTC decode(BitInputStream bitInputStream) {
+		final PublisherTC.Builder builder = PublisherTC.newBuilder()
+		                                               .purposeConsents(bitInputStream.readBitSet(PUB_PURPOSE_CONSENT.getLength()))
+		                                               .purposeLegitimateInterest(bitInputStream.readBitSet(PUB_PURPOSES_LI_TRANSPARENCY.getLength()));
 
-		final int numberOfCustomPurposes = bitVector.readNextInt(NUM_CUSTOM_PURPOSES);
-		final BitSet customPurposes = bitVector.readNextBitSet(numberOfCustomPurposes);
-		final BitSet customLiTransparency = bitVector.readNextBitSet(numberOfCustomPurposes);
+		final int numberOfCustomPurposes = bitInputStream.readInt(NUM_CUSTOM_PURPOSES);
+		if (numberOfCustomPurposes > 0) {
+			builder.customPurposeConsents(bitInputStream.readBitSet(numberOfCustomPurposes))
+			       .customPurposeLegitimateInterest(bitInputStream.readBitSet(numberOfCustomPurposes));
+		}
 
-		return new PublisherTCImpl(consents, liTransparency, customPurposes, customLiTransparency);
+		return builder.build();
 	}
 }

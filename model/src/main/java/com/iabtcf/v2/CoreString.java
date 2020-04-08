@@ -1,6 +1,11 @@
 package com.iabtcf.v2;
 
 import java.time.Instant;
+import java.util.BitSet;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -227,5 +232,510 @@ public interface CoreString {
 	 */
 	RestrictionType getPublisherRestriction(final Purpose purpose, final int vendor);
 
+	RestrictionType getPublisherRestriction(final int purpose, final int vendor);
+
 	Stream<PublisherRestriction> getAllPublisherRestrictions();
+
+	static Builder newBuilder() {
+		return new Builder();
+	}
+
+	static Builder newBuilder(CoreString coreString) {
+		return new Builder(coreString);
+	}
+
+	class Builder {
+
+		private int version;
+		private Instant created;
+		private Instant lastUpdated;
+		private int cmpId;
+		private int cmpVersion;
+		private int consentScreen;
+		private String consentLanguage;
+		private int vendorListVersion;
+		private int policyVersion;
+		private boolean isServiceSpecific;
+		private boolean useNonStandardStacks;
+		private boolean isPurposeOneTreatment;
+		private String publisherCountryCode;
+		private BitSet specialFeaturesOptInts = new BitSet();
+		private BitSet purposesConsent = new BitSet();
+		private BitSet purposesLITransparency = new BitSet();
+		private BitSet vendorConsents = new BitSet();
+		private BitSet vendorLegitimateInterests = new BitSet();
+		private Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions = new HashMap<>();
+
+		Builder() {}
+
+		Builder(CoreString coreString) {
+			version = coreString.getVersion();
+			created = coreString.getCreated();
+			lastUpdated = coreString.getLastUpdated();
+			cmpId = coreString.getCmpId();
+			cmpVersion = coreString.getCmpVersion();
+			consentScreen = coreString.getConsentScreen();
+			consentLanguage = coreString.getConsentLanguage();
+			vendorListVersion = coreString.getVendorListVersion();
+			policyVersion = coreString.getPolicyVersion();
+			isServiceSpecific = coreString.isServiceSpecific();
+			useNonStandardStacks = coreString.isUseNonStandardStacks();
+			isPurposeOneTreatment = coreString.isPurposeOneTreatment();
+			publisherCountryCode = coreString.getPublisherCountryCode();
+			coreString.getAllOptedInSpecialFeatures().forEach(specialFeaturesOptInts::set);
+			coreString.getAllConsentedPurposes().forEach(purposesConsent::set);
+			coreString.getAllLegitimateInterestPurposes().forEach(purposesLITransparency::set);
+			coreString.getAllConsentedVendors().forEach(vendorConsents::set);
+			coreString.getAllLegitimateInterestVendors().forEach(vendorLegitimateInterests::set);
+			coreString.getAllPublisherRestrictions().forEach(pr -> {
+				BitSet rangeData = new BitSet();
+				pr.getAllVendors().forEach(rangeData::set);
+				publisherRestrictions.computeIfAbsent(pr.getPurposeId(), p -> new EnumMap<>(RestrictionType.class))
+				                     .put(pr.getRestrictionType(), rangeData);
+
+			});
+		}
+
+		public Builder version(final int val) {
+			version = val;
+			return this;
+		}
+
+		public Builder consentRecordCreated(final Instant val) {
+			created = val;
+			return this;
+		}
+
+		public Builder consentRecordLastUpdated(final Instant val) {
+			lastUpdated = val;
+			return this;
+		}
+
+		public Builder consentManagerProviderId(final int val) {
+			cmpId = val;
+			return this;
+		}
+
+		public Builder consentManagerProviderVersion(final int val) {
+			cmpVersion = val;
+			return this;
+		}
+
+		public Builder consentScreen(final int val) {
+			consentScreen = val;
+			return this;
+		}
+
+		public Builder consentLanguage(final String val) {
+			consentLanguage = val;
+			return this;
+		}
+
+		public Builder vendorListVersion(final int val) {
+			vendorListVersion = val;
+			return this;
+		}
+
+		public Builder policyVersion(final int val) {
+			policyVersion = val;
+			return this;
+		}
+
+		public Builder isServiceSpecific(final boolean val) {
+			isServiceSpecific = val;
+			return this;
+		}
+
+		public Builder useNonStandardStacks(final boolean val) {
+			useNonStandardStacks = val;
+			return this;
+		}
+
+		public Builder isPurposeOneTreatment(final boolean val) {
+			isPurposeOneTreatment = val;
+			return this;
+		}
+
+		public Builder publisherCountryCode(final String val) {
+			publisherCountryCode = val;
+			return this;
+		}
+
+		public Builder addSpecialFeatureOptedIn(final int val) {
+			specialFeaturesOptInts.set(val);
+			return this;
+		}
+
+		public Builder addSpecialFeatureOptedIn(final SpecialFeature specialFeature) {
+			specialFeaturesOptInts.set(specialFeature.getId());
+			return this;
+		}
+
+		public Builder specialFeatureOptIns(final BitSet bitSet) {
+			specialFeaturesOptInts = bitSet;
+			return this;
+		}
+
+		public Builder addPurposeConsent(final int val) {
+			purposesConsent.set(val);
+			return this;
+		}
+
+		public Builder addPurposeConsent(final Purpose purpose) {
+			purposesConsent.set(purpose.getId());
+			return this;
+		}
+
+		public Builder purposeConsents(final BitSet bitSet) {
+			purposesConsent = bitSet;
+			return this;
+		}
+
+		public Builder addPurposesLegitimateInterest(final int val) {
+			purposesLITransparency.set(val);
+			return this;
+		}
+
+		public Builder addPurposesLegitimateInterest(final Purpose purpose) {
+			purposesLITransparency.set(purpose.getId());
+			return this;
+		}
+
+		public Builder purposeLegitimateInterests(final BitSet bitSet) {
+			purposesLITransparency = bitSet;
+			return this;
+		}
+
+		public Builder addVendorConsent(final int val) {
+			vendorConsents.set(val);
+			return this;
+		}
+
+		public Builder vendorConsents(final BitSet bitSet) {
+			vendorConsents = bitSet;
+			return this;
+		}
+
+		public Builder addVendorLegitimateInterest(final int val) {
+			vendorLegitimateInterests.set(val);
+			return this;
+		}
+
+		public Builder vendorLegitimateInterests(final BitSet bitSet) {
+			vendorLegitimateInterests = bitSet;
+			return this;
+		}
+
+		public Builder addPublisherRestriction(final int vendor,
+		                                       final Purpose purpose,
+		                                       final RestrictionType restrictionType) {
+			return addPublisherRestriction(vendor, purpose.getId(), restrictionType);
+		}
+
+		public Builder addPublisherRestriction(final int vendor,
+		                                       final int purpose,
+		                                       final RestrictionType restrictionType) {
+			publisherRestrictions.computeIfAbsent(purpose, p -> new EnumMap<>(RestrictionType.class))
+			                     .computeIfAbsent(restrictionType, r -> new BitSet())
+			                     .set(vendor);
+			return this;
+		}
+
+		public Builder publisherRestrictions(final Map<Integer, EnumMap<RestrictionType, BitSet>> map) {
+			publisherRestrictions = map;
+			return this;
+		}
+
+		public CoreString build() {
+			return new CoreStringImpl(this);
+		}
+
+		private static final class CoreStringImpl implements CoreString {
+
+			private final int version;
+			private final Instant consentRecordCreated;
+			private final Instant consentRecordLastUpdated;
+			private final int consentManagerProviderId;
+			private final int consentManagerProviderVersion;
+			private final int consentScreen;
+			private final String consentLanguage;
+			private final int vendorListVersion;
+			private final int policyVersion;
+			private final boolean isServiceSpecific;
+			private final boolean useNonStandardStacks;
+			private final boolean isPurposeOneTreatment;
+			private final String publisherCountryCode;
+			private final BitSet specialFeaturesOptInts;
+			private final BitSet purposesConsent;
+			private final BitSet purposesLITransparency;
+			private final BitSet vendorConsents;
+			private final BitSet vendorLegitimateInterests;
+			private final Map<Integer, EnumMap<RestrictionType, BitSet>> publisherRestrictions;
+
+			private CoreStringImpl(final Builder builder) {
+				version = builder.version;
+				consentRecordCreated = builder.created;
+				consentRecordLastUpdated = builder.lastUpdated;
+				consentManagerProviderId = builder.cmpId;
+				consentManagerProviderVersion = builder.cmpVersion;
+				consentScreen = builder.consentScreen;
+				consentLanguage = builder.consentLanguage;
+				vendorListVersion = builder.vendorListVersion;
+				policyVersion = builder.policyVersion;
+				isServiceSpecific = builder.isServiceSpecific;
+				useNonStandardStacks = builder.useNonStandardStacks;
+				isPurposeOneTreatment = builder.isPurposeOneTreatment;
+				publisherCountryCode = builder.publisherCountryCode;
+				specialFeaturesOptInts = builder.specialFeaturesOptInts;
+				purposesConsent = builder.purposesConsent;
+				purposesLITransparency = builder.purposesLITransparency;
+				vendorConsents = builder.vendorConsents;
+				vendorLegitimateInterests = builder.vendorLegitimateInterests;
+				publisherRestrictions = builder.publisherRestrictions;
+			}
+
+			public static Builder newBuilder() {
+				return new Builder();
+			}
+
+			@Override
+			public int getVersion() {
+				return version;
+			}
+
+			@Override
+			public Instant getCreated() {
+				return consentRecordCreated;
+			}
+
+			@Override
+			public Instant getLastUpdated() {
+				return consentRecordLastUpdated;
+			}
+
+			@Override
+			public int getCmpId() {
+				return consentManagerProviderId;
+			}
+
+			@Override
+			public int getCmpVersion() {
+				return consentManagerProviderVersion;
+			}
+
+			@Override
+			public int getConsentScreen() {
+				return consentScreen;
+			}
+
+			@Override
+			public String getConsentLanguage() {
+				return consentLanguage;
+			}
+
+			@Override
+			public int getVendorListVersion() {
+				return vendorListVersion;
+			}
+
+			@Override
+			public int getPolicyVersion() {
+				return policyVersion;
+			}
+
+			@Override
+			public boolean isServiceSpecific() {
+				return isServiceSpecific;
+			}
+
+			@Override
+			public boolean isUseNonStandardStacks() {
+				return useNonStandardStacks;
+			}
+
+			@Override
+			public boolean isPurposeOneTreatment() {
+				return isPurposeOneTreatment;
+			}
+
+			@Override
+			public String getPublisherCountryCode() {
+				return publisherCountryCode;
+			}
+
+			@Override
+			public boolean isSpecialFeatureOptedIn(final int specialFeature) {
+				return specialFeaturesOptInts.get(specialFeature);
+			}
+
+			@Override
+			public IntStream getAllOptedInSpecialFeatures() {
+				return specialFeaturesOptInts.stream();
+			}
+
+			@Override
+			public boolean isPurposeConsented(final int purpose) {
+				return purposesConsent.get(purpose);
+			}
+
+			@Override
+			public IntStream getAllConsentedPurposes() {
+				return purposesConsent.stream();
+			}
+
+			@Override
+			public boolean isPurposeLegitimateInterest(final int purpose) {
+				return purposesLITransparency.get(purpose);
+			}
+
+			@Override
+			public IntStream getAllLegitimateInterestPurposes() {
+				return purposesLITransparency.stream();
+			}
+
+			@Override
+			public boolean isVendorConsented(final int vendor) {
+				return vendorConsents.get(vendor);
+			}
+
+			@Override
+			public IntStream getAllConsentedVendors() {
+				return vendorConsents.stream();
+			}
+
+			@Override
+			public boolean isVendorLegitimateInterest(final int vendor) {
+				return vendorLegitimateInterests.get(vendor);
+			}
+
+			@Override
+			public IntStream getAllLegitimateInterestVendors() {
+				return vendorLegitimateInterests.stream();
+			}
+
+			@Override
+			public RestrictionType getPublisherRestriction(final Purpose purpose, final int vendor) {
+				return getPublisherRestriction(purpose.getId(), vendor);
+			}
+
+			@Override
+			public RestrictionType getPublisherRestriction(final int purpose, final int vendor) {
+				if (publisherRestrictions.containsKey(purpose)) {
+					return publisherRestrictions.get(purpose).entrySet().stream()
+					                            .filter(e -> e.getValue().get(vendor))
+					                            .findFirst()
+					                            .map(Map.Entry::getKey)
+					                            .orElse(RestrictionType.UNDEFINED);
+				}
+				return RestrictionType.UNDEFINED;
+			}
+
+			@Override
+			public Stream<PublisherRestriction> getAllPublisherRestrictions() {
+				return publisherRestrictions.entrySet()
+				                            .stream()
+				                            .flatMap(e -> e.getValue().entrySet()
+				                                           .stream()
+				                                           .map(r -> new PublisherRestriction() {
+					                                           @Override
+					                                           public int getPurposeId() {
+						                                           return e.getKey();
+					                                           }
+
+					                                           @Override
+					                                           public RestrictionType getRestrictionType() {
+						                                           return r.getKey();
+					                                           }
+
+					                                           @Override
+					                                           public boolean isVendorIncluded(final int vendor) {
+						                                           return r.getValue().get(vendor);
+					                                           }
+
+					                                           @Override
+					                                           public IntStream getAllVendors() {
+						                                           return r.getValue().stream();
+					                                           }
+				                                           }));
+			}
+
+			@Override
+			public boolean equals(final Object o) {
+				if (this == o) {
+					return true;
+				}
+				if (o == null || getClass() != o.getClass()) {
+					return false;
+				}
+				final CoreStringImpl that = (CoreStringImpl) o;
+				return version == that.version &&
+				       consentManagerProviderId == that.consentManagerProviderId &&
+				       consentManagerProviderVersion == that.consentManagerProviderVersion &&
+				       consentScreen == that.consentScreen &&
+				       vendorListVersion == that.vendorListVersion &&
+				       policyVersion == that.policyVersion &&
+				       isServiceSpecific == that.isServiceSpecific &&
+				       useNonStandardStacks == that.useNonStandardStacks &&
+				       isPurposeOneTreatment == that.isPurposeOneTreatment &&
+				       Objects.equals(consentRecordCreated, that.consentRecordCreated) &&
+				       Objects.equals(consentRecordLastUpdated, that.consentRecordLastUpdated) &&
+				       Objects.equals(consentLanguage, that.consentLanguage) &&
+				       Objects.equals(publisherCountryCode, that.publisherCountryCode) &&
+				       Objects.equals(specialFeaturesOptInts, that.specialFeaturesOptInts) &&
+				       Objects.equals(purposesConsent, that.purposesConsent) &&
+				       Objects.equals(purposesLITransparency, that.purposesLITransparency) &&
+				       Objects.equals(vendorConsents, that.vendorConsents) &&
+				       Objects.equals(vendorLegitimateInterests, that.vendorLegitimateInterests) &&
+				       Objects.equals(publisherRestrictions, that.publisherRestrictions);
+			}
+
+			@Override
+			public int hashCode() {
+				return Objects.hash(version,
+						consentRecordCreated,
+						consentRecordLastUpdated,
+						consentManagerProviderId,
+						consentManagerProviderVersion,
+						consentScreen,
+						consentLanguage,
+						vendorListVersion,
+						policyVersion,
+						isServiceSpecific,
+						useNonStandardStacks,
+						isPurposeOneTreatment,
+						publisherCountryCode,
+						specialFeaturesOptInts,
+						purposesConsent,
+						purposesLITransparency,
+						vendorConsents,
+						vendorLegitimateInterests,
+						publisherRestrictions);
+			}
+
+			@Override
+			public String toString() {
+				return "CoreString{" +
+				       "version: " + version +
+				       ", consentRecordCreated: " + consentRecordCreated +
+				       ", consentRecordLastUpdated: " + consentRecordLastUpdated +
+				       ", consentManagerProviderId: " + consentManagerProviderId +
+				       ", consentManagerProviderVersion: " + consentManagerProviderVersion +
+				       ", consentScreen: " + consentScreen +
+				       ", consentLanguage: " + consentLanguage +
+				       ", vendorListVersion: " + vendorListVersion +
+				       ", policyVersion: " + policyVersion +
+				       ", isServiceSpecific: " + isServiceSpecific +
+				       ", useNonStandardStacks: " + useNonStandardStacks +
+				       ", isPurposeOneTreatment: " + isPurposeOneTreatment +
+				       ", publisherCountryCode: " + publisherCountryCode +
+				       ", specialFeaturesOptInts: " + specialFeaturesOptInts +
+				       ", purposesConsent: " + purposesConsent +
+				       ", purposesLITransparency: " + purposesLITransparency +
+				       ", vendorConsents: " + vendorConsents +
+				       ", vendorLegitimateInterests: " + vendorLegitimateInterests +
+				       ", publisherRestrictions: " + publisherRestrictions +
+				       '}';
+			}
+		}
+	}
 }

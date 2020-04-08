@@ -6,6 +6,7 @@ import com.iabtcf.v2.PublisherTC;
 import com.iabtcf.v2.Purpose;
 import com.iabtcf.v2.RestrictionType;
 import com.iabtcf.v2.TCModel;
+import com.iabtcf.v2.decoder.exceptions.UnsupportedVersionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TCDecoderTest {
 
     @Test
-    void testDecodeAllSegments() {
+    void testDecodeAllSegments() throws UnsupportedVersionException {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA.cAAAAAAAITg=";
         TCModel tc = TCModelDecoder.decode(tcString);
 
@@ -51,7 +52,7 @@ class TCDecoderTest {
     }
 
     @Test
-    void testParseWithOOBSignals() {
+    void testParseWithOOBSignals() throws UnsupportedVersionException {
         String tcString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IBAgAAAgAIAwgAgAAAAEAAAACA.QAagAQAgAIAwgA";
         TCModel tc = TCModelDecoder.decode(tcString);
 
@@ -75,7 +76,7 @@ class TCDecoderTest {
     }
 
     @Test
-    void testPublisherRestrictions() {
+    void testPublisherRestrictions() throws UnsupportedVersionException {
         String bitString =
                 "0000100011101011100"
                 + "1000000000000001010"
@@ -123,18 +124,18 @@ class TCDecoderTest {
             "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA.IFoEUQQgAIQwgIwQABAEAAAAOIAACAIAAAAQAIAgEAACEAAAAAgAQBAAAAAAAGBAAgAAAAAAAFAAECAAAgAAQARAEQAAAAAJAAIAAgAAAYQEAAAQmAgBC3ZAYzUw",
             "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA"
     })
-    void testVanillaDecode(String tcString) {
+    void testVanillaDecode(String tcString) throws UnsupportedVersionException {
         assertNotNull(TCModelDecoder.decode(tcString));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"BObdrPUOevsguAfDqFENCNAAAAAmeAAA", "DGH"})
     void testBadString(String badString) {
-        assertThrows(UnsupportedOperationException.class, () -> TCModelDecoder.decode(badString));
+        assertThrows(UnsupportedVersionException.class, () -> TCModelDecoder.decode(badString));
     }
 
     @Test
-    void testDefaultSegmentType() {
+    void testDefaultSegmentType() throws UnsupportedVersionException {
         final String publisherPurposes = "00000000"; // segment type
         final String base64CoreString = "COtybn4PA_zT4KjACBENAPCIAEBAAECAAIAAAAAAAAAA." + Util.base64FromBitString(publisherPurposes);
 

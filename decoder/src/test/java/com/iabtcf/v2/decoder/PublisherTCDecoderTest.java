@@ -23,9 +23,9 @@ class PublisherTCDecoderTest {
 				+ "000010"                      // number of custom purposes
 				+ "01"                          // CustomPurposesConsent
 				+ "11";                          // CustomPurposesLITransparency
-		final BitVector publisherTCVector = Util.vectorFromBitString(publisherPurposes);
+		final BitInputStream publisherTCVector = BitInputStream.fromBase64String(Util.base64FromBitString(publisherPurposes));
 
-		assertEquals(SegmentType.PUBLISHER_TC.getValue(), publisherTCVector.readNextInt(Field.PublisherTC.SEGMENT_TYPE));
+		assertEquals(SegmentType.PUBLISHER_TC.getValue(), publisherTCVector.readInt(Field.PublisherTC.SEGMENT_TYPE));
 		final PublisherTC publisherTC = PublisherTCDecoder.decode(publisherTCVector);
 
 		assertTrue(publisherTC.isPurposeConsented(1));

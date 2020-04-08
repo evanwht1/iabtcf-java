@@ -2,7 +2,6 @@ package com.iabtcf.v2.decoder;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,8 +9,6 @@ import java.util.List;
  * @author ewhite 2/22/20
  */
 public class Util {
-
-	private static final Base64.Decoder DECODER = Base64.getUrlDecoder();
 
 	static String base64FromBitString(String str) {
 		List<Byte> byteList = new ArrayList<>();
@@ -33,15 +30,5 @@ public class Util {
 			bytes[i++] = aByte;
 		}
 		return Base64.getUrlEncoder().encodeToString(bytes);
-	}
-
-	static BitVector vectorFromBase64String(final String str) {
-		byte[] bytes = DECODER.decode(str);
-		return BitVector.from(bytes);
-	}
-
-	static BitVector vectorFromBitString(final String str) {
-		byte[] bytes = DECODER.decode(base64FromBitString(str));
-		return BitVector.from(bytes);
 	}
 }
